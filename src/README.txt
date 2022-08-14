@@ -1,5 +1,5 @@
-// Ben Myung-in Lee. 2018.12.10. AlloThresher ver.1.181210
-/*  Copyright 2018 [Myungin Lee]
+// Ben Myung-in Lee. 2022.08.10. AlloThresher ver.1.220810
+/*  Copyright 2022 [Myungin Lee]
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
