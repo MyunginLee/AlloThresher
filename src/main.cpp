@@ -148,8 +148,8 @@ struct Granulator {
 
   // gui tweakable parameters
   //
-  ParameterInt whichClip{"/clip", "", 0, "", 0, 8};
-  Parameter grainDuration{"/duration", "", 0.25, "", 0.001, 1.0};
+  ParameterInt whichClip{"/clip", "", 0, "", 0, 9};
+  Parameter grainDuration{"/duration", "", 0.25, "", 0.001, 2.0};
   Parameter startPosition{"/position", "", 0.25, "", 0.0, 1.0};
   Parameter peakPosition{"/envelope", "", 0.1, "", 0.0, 1.0};
   Parameter amplitudePeak{"/amplitude", "", 0.707, "", 0.0, 1.0};
@@ -331,6 +331,7 @@ struct MyApp : App {
     granulator.load("source/6.wav");
     granulator.load("source/7.wav");
     granulator.load("source/8.wav");
+    granulator.load("source/9.wav");
 
     gui.init();
     /*
