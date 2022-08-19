@@ -377,10 +377,14 @@ struct MyApp : App {
   }
 
   void onDraw(Graphics& g) override {
-    background = 0.1*acc_abs;
+    // background = 0.1*acc_abs;
+    background = 0.0;
+
     g.clear(background);
     texBlur.resize(fbWidth(), fbHeight());
-    g.tint(0.98);
+    g.tint(0.98- 0.1*acc_abs);
+    g.tint(0.98+ 0.05*acc_abs);
+
     g.quadViewport(texBlur, -1.005, -1.005, 2.01, 2.01);  // Outward
     // g.quadViewport(texBlur, -0.995, -0.995, 1.99, 1.99); // Inward
     // g.quadViewport(texBlur, -1.005, -1.00, 2.01, 2.0);   // Oblate
@@ -413,7 +417,7 @@ struct MyApp : App {
     g.translate(0,0,0);
     // g.color(abs(cell_grv.x)*5+al::rnd::uniform(), abs(cell_grv.y)*20+al::rnd::uniform(), abs(cell_grv.z)*10+al::rnd::uniform());
     // g.color(HSV(acc_abs * (gest_command)*0.2 + 0.1* (gest_command) + 0.1 * al::rnd::uniform(acc_abs),0.7+ al::rnd::uniform(acc_abs),0.9+0.1*al::rnd::uniform(acc_abs)));
-    g.color(HSV(0.1* (gest_command) + 0.1 * al::rnd::uniform(acc_abs),0.7+ al::rnd::uniform(acc_abs),0.9+0.1*al::rnd::uniform(acc_abs)));
+    g.color(HSV(0.1* (gest_command) + 0.1 * al::rnd::uniform(acc_abs),0.5+ al::rnd::uniform(acc_abs),0.7+1*al::rnd::uniform(acc_abs)));
 
     g.rotate(90, Vec3f(0,0,1)); 
     g.rotate(cell_acc.x*100, Vec3f(rot.x,0,0));
@@ -426,7 +430,7 @@ struct MyApp : App {
     {
       mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs*100), al::rnd::uniformS(acc_abs), 1 + 0.5 *al::rnd::uniformS(acc_abs) ));
       // mSpectrogram.vertex(cos(i) *(1 + 10 * cos(spectrum[i])), sin(i) * (1+ 10 * sin(spectrum[i])), 0.0);
-      mSpectrogram.vertex( 0.1*i,  spectrum[i], 0.0);
+      mSpectrogram.vertex( 0.1*i,  5*spectrum[i], 0.0);
 
     }
     g.draw(mSpectrogram);
