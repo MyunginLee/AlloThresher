@@ -198,7 +198,7 @@ struct Granulator {
   diy::FloatPair operator()() {
     // figure out if we should generate (reincarnate) more grains; then do so.
     //
-    birthRate = 10 + acc_abs * 100;
+    birthRate = 10 + tan(acc_abs);
     grainBirth.frequency(birthRate);
     if (grainBirth()) {
       // we want to birth a new grain
@@ -214,8 +214,8 @@ struct Granulator {
     float left = 0, right = 0;
     manager.for_each_active([&](Grain& g) {
       float f = g();
-      left += f * (1 - g.pan);
-      right += f * g.pan;
+      left += f * (1 - g.pan)* (acc_abs*5);
+      right += f * g.pan *(acc_abs*5);
       if (g.index.done()) {
         manager.schedule_for_deactivation(g);
       }
@@ -370,7 +370,7 @@ struct MyApp : App {
     navControl().active(!gui.usingInput());
     shader_phase = 4+acc_abs*7;
     halfSize = 0.2 * shader_phase / 3;
-    nav().pos(0, 0.0, 5);
+    nav().pos(0.1 *cell_acc.x, 0.1 *cell_acc.y, 3 - acc_abs );
     nav().quat(Quatd(1.000000, 0.000000, 0.000000, 0.000000));
     // printf("%d %d\n", audioIO().isOpen(), audioIO().isRunning());
     //
@@ -399,20 +399,22 @@ struct MyApp : App {
     // pointMesh.color(abs(cell_grv.x)*100, abs(cell_grv.y)*100, abs(cell_grv.z)*100);
     pointMesh.color(HSV(acc_abs*100,1+al::rnd::uniform(),1+al::rnd::uniform()));
     mSpectrogram.reset();
-    mSpectrogram.primitive(Mesh::LINE_STRIP);
-    // mSpectrogram.primitive(Mesh::POINTS);
+    // mSpectrogram.primitive(Mesh::LINE_STRIP);
+    mSpectrogram.primitive(Mesh::POINTS);
 
     g.scale(acc_abs*10+1);
     g.shader(shader);
     g.shader().uniform("halfSize", 0.05);
-    g.draw(pointMesh);
+    // g.draw(pointMesh);
     g.popMatrix();
     shade_texture.unbind();
     // Draw Waveform
     g.pushMatrix();
     g.translate(0,0,0);
     // g.color(abs(cell_grv.x)*5+al::rnd::uniform(), abs(cell_grv.y)*20+al::rnd::uniform(), abs(cell_grv.z)*10+al::rnd::uniform());
-    g.color(HSV(acc_abs*200+al::rnd::uniform(acc_abs),1+0.1*al::rnd::uniform(),1+0.1*al::rnd::uniform()));
+    // g.color(HSV(acc_abs * (gest_command)*0.2 + 0.1* (gest_command) + 0.1 * al::rnd::uniform(acc_abs),0.7+ al::rnd::uniform(acc_abs),0.9+0.1*al::rnd::uniform(acc_abs)));
+    g.color(HSV(0.1* (gest_command) + 0.1 * al::rnd::uniform(acc_abs),0.7+ al::rnd::uniform(acc_abs),0.9+0.1*al::rnd::uniform(acc_abs)));
+
     g.rotate(90, Vec3f(0,0,1)); 
     g.rotate(cell_acc.x*100, Vec3f(rot.x,0,0));
     g.rotate(cell_acc.y*100, Vec3f(0,rot.y,0));
@@ -424,7 +426,7 @@ struct MyApp : App {
     {
       mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs*100), al::rnd::uniformS(acc_abs), 1 + 0.5 *al::rnd::uniformS(acc_abs) ));
       // mSpectrogram.vertex(cos(i) *(1 + 10 * cos(spectrum[i])), sin(i) * (1+ 10 * sin(spectrum[i])), 0.0);
-      mSpectrogram.vertex( i,  spectrum[i], 0.0);
+      mSpectrogram.vertex( 0.1*i,  spectrum[i], 0.0);
 
     }
     g.draw(mSpectrogram);
