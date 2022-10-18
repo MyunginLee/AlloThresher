@@ -1,5 +1,25 @@
-#ifndef __240C_BEN
-#define __240C_BEN
+#ifndef __whak
+#define __whak
+
+#include "al/app/al_App.hpp"
+#include "al/ui/al_ControlGUI.hpp"
+#include "al/ui/al_Parameter.hpp"
+#include "al/ui/al_PresetHandler.hpp"
+#include "al/ui/al_PresetServer.hpp"
+#include "al/sound/al_Reverb.hpp"
+#include "synths.h"
+#include "Gamma/Noise.h"
+#include "Gamma/Delay.h"
+#include "Gamma/Oscillator.h"
+#include "Gamma/Filter.h"
+#include "Gamma/Envelope.h"
+#include "Gamma/Effects.h"
+#include "Gamma/Analysis.h"
+#include "Gamma/DFT.h"
+#include <forward_list>
+#include <string>
+#include <unordered_set>
+#include <vector>
 
 namespace ben {
     const int window_size = 128;
@@ -96,4 +116,4 @@ namespace ben {
     }
     )";
 }  // namespace diy
-#endif  // __240C_SYNTHS__
+#endif  
