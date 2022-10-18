@@ -302,7 +302,8 @@ struct MyApp : App {
     // pointMesh.color(HSV(0.66, 1.0, 1.0));
 
     // prepare Waveform 
-    texture.create2D(N / 2, N / 2, Texture::RGB8);    texBlur.resize(fbWidth(), fbHeight());
+    texture.create2D(N / 2, N / 2, Texture::RGB8);    
+    texBlur.resize(fbWidth(), fbHeight());
 
     int Mx = texture.width();
     int My = texture.height();
