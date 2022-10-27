@@ -88,7 +88,7 @@ struct MyApp : App
     // Values near 0.7 are recommended. Moving further away from 0.7 will lead
     // to more distinct echoes.
     reverb.diffusion(0.76, 0.666, 0.707, 0.571);
-
+    audioIO().print();
   }
 
   void onCreate() override
@@ -201,6 +201,10 @@ struct MyApp : App
     nav().quat(Quatd(1.000000, 0.000000, 0.000000, 0.000000));
     // printf("%d %d\n", audioIO().isOpen(), audioIO().isRunning());
     //
+
+    // granular source command is determined by the android angle,, **
+    cout << ao.x << " " <<     int( (ao.x+180) / 36)<< endl; 
+    gest_command = int( (ao.x+180) / 36);
     // Power of acceleration.
     acc_abs = cbrt(cell_acc.x * cell_acc.x + cell_acc.y * cell_acc.y + cell_acc.z * cell_acc.z) * 0.1;
     android_acc_abs = cbrt(aa.x*aa.x + aa.y*aa.y + aa.z*aa.z) * 0.02;
@@ -249,9 +253,11 @@ struct MyApp : App
     g.tint(0.98 + 0.05 * acc_abs);
 
     // g.quadViewport(texBlur, -1.005, -1.005, 2.01, 2.01); // Outward
-    g.quadViewport(texBlur, -1. - android_acc_abs*0.1, -1.- android_acc_abs*0.1
-                  , 2 + android_acc_abs*0.2, 2 + android_acc_abs*0.2); // Outward
-
+    // g.quadViewport(texBlur, -1. - android_acc_abs*0.1, -1.- android_acc_abs*0.1
+    //               , 2 + android_acc_abs*0.2, 2 + android_acc_abs*0.2); // Outward. good straight!
+    float bnf = aa.mag()*0.01;
+    g.quadViewport(texBlur, -1. - bnf*0.1, -1.- bnf*0.1
+                  , 2 + bnf*0.2, 2 + bnf*0.2); // Outward. back and fowards!
     // g.quadViewport(texBlur, -0.995, -0.995, 1.99, 1.99); // Inward
     // g.quadViewport(texBlur, -1.005, -1.00, 2.01, 2.0);   // Oblate
     // g.quadViewport(texBlur, -1.005, -0.995, 2.01, 1.99); // Squeeze
@@ -281,7 +287,9 @@ struct MyApp : App
     // g.translate(0, 0, 0);
     // g.color(abs(cell_grv.x)*5+al::rnd::uniform(), abs(cell_grv.y)*20+al::rnd::uniform(), abs(cell_grv.z)*10+al::rnd::uniform());
     // g.color(HSV(acc_abs * (gest_command)*0.2 + 0.1* (gest_command) + 0.1 * al::rnd::uniform(acc_abs),0.7+ al::rnd::uniform(acc_abs),0.9+0.1*al::rnd::uniform(acc_abs)));
-    g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), android_acc_abs + al::rnd::uniform(acc_abs), 0.7 + 1 * al::rnd::uniform(acc_abs)));
+// vivid!
+    // g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), android_acc_abs + al::rnd::uniform(acc_abs), 0.7 + 1 * al::rnd::uniform(acc_abs))); 
+    g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), android_acc_abs + al::rnd::uniform(acc_abs), 0.2+android_acc_abs + 1 * al::rnd::uniform(acc_abs)));
 
     // g.rotate(90, Vec3f(0, 0, 1));
     // g.rotate(cell_acc.x * 100, Vec3f(rot.x, 0, 0));
@@ -295,8 +303,8 @@ struct MyApp : App
     {
       mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs * 100), al::rnd::uniformS(acc_abs), 1 + 0.5 * al::rnd::uniformS(acc_abs)));
       // mSpectrogram.vertex(cos(i) *(1 + 10 * cos(spectrum[i])), sin(i) * (1+ 10 * sin(spectrum[i])), 0.0);
-      mSpectrogram.vertex( 10*cos( 0.1 * i ) 
-      , 10*sin(100* spectrum[i] * (1 + android_acc_abs)), 0);
+      mSpectrogram.vertex( 10*cos( 0.01 * i ) 
+      , 10*sin(0.01*i)*(100* spectrum[i] * (1 + android_acc_abs)), 0);
     }
     // cout << android_acc_abs << endl;
     g.draw(mSpectrogram);
@@ -311,7 +319,6 @@ struct MyApp : App
     try
     {
       active.set(granulator.manager.activeGrainCount());
-
       while (io())
       {
 
@@ -366,7 +373,6 @@ struct MyApp : App
 
   void onMessage(osc::Message &m) override
   {
-    // m.print();
     int k = 0;
 
     // Check that the address and tags match what we expect
