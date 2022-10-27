@@ -8,37 +8,37 @@ using namespace diy;
 using namespace std;
 #define FFT_SIZE 4048
 
-struct AndroidSynth : public PositionedVoice
-{
-  gam::Buzz<> interact_saw;
-  Line line_saw;
-  gam::NoiseWhite<> mNoise;
-  gam::Reson<> mRes;
-  Reverb<float> reverb;
+// struct AndroidSynth : public PositionedVoice
+// {
+//   gam::Buzz<> interact_saw;
+//   Line line_saw;
+//   gam::NoiseWhite<> mNoise;
+//   gam::Reson<> mRes;
+//   Reverb<float> reverb;
 
-  void init() override
-  {
-  }
-  void update(double dt) override
-  {
+// //   void init() override
+// //   {
+// //   }
+// //   void update(double dt) override
+// //   {
 
-  }
-  void onProcess(Graphics &g) override
-  {
-  }
-void onProcess(AudioIOData &io) override
-  {
+// //   }
+// //   void onProcess(Graphics &g) override
+// //   {
+// //   }
+// // void onProcess(AudioIOData &io) override
+// //   {
 
-  }
-  void onTriggerOn() override
-  {    
-  }
-};
+// //   }
+// //   void onTriggerOn() override
+// //   {    
+// //   }
+// };
 struct MyApp : App
 {
   float background = 0.;
   Granulator granulator;
-  AndroidSynth synth;
+  // AndroidSynth synth;
   ControlGUI gui;
   PresetHandler presetHandler{"GranulatorPresets"};
   PresetServer presetServer{"0.0.0.0", 9011};
@@ -206,20 +206,20 @@ struct MyApp : App
     android_acc_abs = cbrt(aa.x*aa.x + aa.y*aa.y + aa.z*aa.z) * 0.02;
     // cout << acc_abs << "   " << android_acc_abs  << "   " << android_acc_abs / acc_abs<< endl;  
      // New values in grv_block, acc_block, power_acc_block
-    cout << android_acc_abs << endl;
+    // cout << android_acc_abs << endl; // Print android acc 
     granulator.cell_acc = cell_acc;
     granulator.cell_grv = cell_grv;
     granulator.acc_abs = acc_abs;
     granulator.gest_command = gest_command;
     // Filter realtime
-    filter_coeff = android_acc_abs * 5000;
+    filter_coeff = 100+android_acc_abs * 1000;
     mFilter.freq(filter_coeff);
     mFilter.res(filter_coeff); 
     mFilter.type(LOW_PASS);
     mFilter.zero();
     // reverb realtime
     reverb.bandwidth(0.9f); // Low-pass amount on input, in [0,1]
-    reverb.damping(0.1f);   // High-frequency damping, in [0,1]
+    reverb.damping(android_acc_abs);   // High-frequency damping, in [0,1]
     reverb.decay(0.1f);     // Tail decay factor, in [0,1]
 
     // Diffusion amounts
@@ -248,7 +248,10 @@ struct MyApp : App
     g.tint(0.98 - 0.1 * acc_abs);
     g.tint(0.98 + 0.05 * acc_abs);
 
-    g.quadViewport(texBlur, -1.005, -1.005, 2.01, 2.01); // Outward
+    // g.quadViewport(texBlur, -1.005, -1.005, 2.01, 2.01); // Outward
+    g.quadViewport(texBlur, -1. - android_acc_abs*0.1, -1.- android_acc_abs*0.1
+                  , 2 + android_acc_abs*0.2, 2 + android_acc_abs*0.2); // Outward
+
     // g.quadViewport(texBlur, -0.995, -0.995, 1.99, 1.99); // Inward
     // g.quadViewport(texBlur, -1.005, -1.00, 2.01, 2.0);   // Oblate
     // g.quadViewport(texBlur, -1.005, -0.995, 2.01, 1.99); // Squeeze
@@ -262,7 +265,7 @@ struct MyApp : App
     g.pushMatrix();
     g.translate(rot.x * 2, rot.y * 2, rot.z * 0.1);
     // pointMesh.color(abs(cell_grv.x)*100, abs(cell_grv.y)*100, abs(cell_grv.z)*100);
-    pointMesh.color(HSV(acc_abs * 100, 1 + al::rnd::uniform(), 1 + al::rnd::uniform()));
+    // pointMesh.color(HSV(acc_abs * 100, 1 + al::rnd::uniform(), 1 + al::rnd::uniform()));
     mSpectrogram.reset();
     // mSpectrogram.primitive(Mesh::LINE_STRIP);
     mSpectrogram.primitive(Mesh::POINTS);
@@ -275,16 +278,15 @@ struct MyApp : App
     shade_texture.unbind();
     // Draw Waveform
     g.pushMatrix();
-    g.translate(0, 0, 0);
+    // g.translate(0, 0, 0);
     // g.color(abs(cell_grv.x)*5+al::rnd::uniform(), abs(cell_grv.y)*20+al::rnd::uniform(), abs(cell_grv.z)*10+al::rnd::uniform());
     // g.color(HSV(acc_abs * (gest_command)*0.2 + 0.1* (gest_command) + 0.1 * al::rnd::uniform(acc_abs),0.7+ al::rnd::uniform(acc_abs),0.9+0.1*al::rnd::uniform(acc_abs)));
-    g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), 0.5 + al::rnd::uniform(acc_abs), 0.7 + 1 * al::rnd::uniform(acc_abs)));
+    g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), android_acc_abs + al::rnd::uniform(acc_abs), 0.7 + 1 * al::rnd::uniform(acc_abs)));
 
-    g.rotate(90, Vec3f(0, 0, 1));
+    // g.rotate(90, Vec3f(0, 0, 1));
     // g.rotate(cell_acc.x * 100, Vec3f(rot.x, 0, 0));
     // g.rotate(cell_acc.y * 100, Vec3f(0, rot.y, 0));
-    // g.rotate(cell_acc.z * 100, Vec3f(0, 0, rot.z));
-    g.rotate(cell_acc.x * 100, Vec3f(cell_grv.x, 0, 0));
+    // g.rotate(cell_acc.z * 100, mFilter3f(cell_grv.x, 0, 0));
     g.rotate(cell_acc.y * 100, Vec3f(0, cell_grv.y, 0));
     g.rotate(cell_acc.z * 100, Vec3f(0, 0, cell_grv.z));
     g.scale(0.1, 1, 1);
@@ -293,8 +295,10 @@ struct MyApp : App
     {
       mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs * 100), al::rnd::uniformS(acc_abs), 1 + 0.5 * al::rnd::uniformS(acc_abs)));
       // mSpectrogram.vertex(cos(i) *(1 + 10 * cos(spectrum[i])), sin(i) * (1+ 10 * sin(spectrum[i])), 0.0);
-      mSpectrogram.vertex(0.1 * i, 5 * spectrum[i], 0.0);
+      mSpectrogram.vertex( 10*cos( 0.1 * i ) 
+      , 10*sin(100* spectrum[i] * (1 + android_acc_abs)), 0);
     }
+    // cout << android_acc_abs << endl;
     g.draw(mSpectrogram);
     g.popMatrix();
     texBlur.copyFrameBuffer();
@@ -331,13 +335,15 @@ struct MyApp : App
         float fl = mFilter(p.left);
         float fr = mFilter(p.right);
         float rv_r1, rv_l1, rv_r2, rv_l2 ;
-        reverb(fl , rv_r1, rv_l1);
+        // reverb(fl , rv_r1, rv_l1);
+        rv_r1 = fr;
+        rv_l1 = fl;
         // reverb(fr , rv_r2, rv_l2);
         // fl = rv_r1 + rv_r2;
         // fr = rv_l1 + rv_l2;
         // io.out(0) = (fl);
         // io.out(1) = (fr);
-
+        // cout << rv_l1<< endl;
         io.out(0) = (rv_l1);
         io.out(1) = (rv_r1);
 
