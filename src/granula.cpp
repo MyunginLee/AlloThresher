@@ -101,6 +101,7 @@ bool bad(float x) {
 struct Granulator {
   vector<diy::Array> arrayList;
   Vec3f cell_acc, cell_grv;
+  Vec3f aa, ao;
   float acc_abs;
   int gest_command;
   Mesh spectrum_acc;
@@ -168,10 +169,16 @@ struct Granulator {
 
     // // map gestural data to input
     grainDuration = acc_abs * 3; 
-
-    startPosition = (cell_grv.y+1)/2;
+    // TODO . match with android ao
+    // startPosition = (cell_grv.y+1)/2;
+    // playbackRate = cell_grv.x;
+    // peakPosition = (cell_grv.z+1)/2;
+    // amplitudePeak = acc_abs * 2;
+    
+    // Android match
+    startPosition = (ao.x +180 ) / 360;// 0~1
     playbackRate = cell_grv.x;
-    peakPosition = (cell_grv.z+1)/2;
+    peakPosition = (ao.y +180 ) / 360;
     amplitudePeak = acc_abs * 2;
 
     // cout << grainDuration << startPosition << playbackRate << endl;

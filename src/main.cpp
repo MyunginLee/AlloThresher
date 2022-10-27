@@ -203,7 +203,7 @@ struct MyApp : App
     //
 
     // granular source command is determined by the android angle,, **
-    cout << ao.x << " " <<     int( (ao.x+180) / 36)<< endl; 
+    // cout << ao.x << " " <<     int( (ao.x+180) / 36)<< endl; 
     gest_command = int( (ao.x+180) / 36);
     // Power of acceleration.
     acc_abs = cbrt(cell_acc.x * cell_acc.x + cell_acc.y * cell_acc.y + cell_acc.z * cell_acc.z) * 0.1;
@@ -215,6 +215,7 @@ struct MyApp : App
     granulator.cell_grv = cell_grv;
     granulator.acc_abs = acc_abs;
     granulator.gest_command = gest_command;
+    granulator.ao = ao;
     // Filter realtime
     filter_coeff = 100+android_acc_abs * 1000;
     mFilter.freq(filter_coeff);
@@ -222,14 +223,14 @@ struct MyApp : App
     mFilter.type(LOW_PASS);
     mFilter.zero();
     // reverb realtime
-    reverb.bandwidth(0.9f); // Low-pass amount on input, in [0,1]
-    reverb.damping(android_acc_abs);   // High-frequency damping, in [0,1]
-    reverb.decay(0.1f);     // Tail decay factor, in [0,1]
+    // reverb.bandwidth(0.9f); // Low-pass amount on input, in [0,1]
+    // reverb.damping(android_acc_abs);   // High-frequency damping, in [0,1]
+    reverb.decay(0.1f+acc_abs);     // Tail decay factor, in [0,1]
 
     // Diffusion amounts
     // Values near 0.7 are recommended. Moving further away from 0.7 will lead
     // to more distinct echoes.
-    reverb.diffusion(0.5 + android_acc_abs, 0.566+ android_acc_abs, 0.707, 0.571);
+    // reverb.diffusion(0.5 + android_acc_abs, 0.566+ android_acc_abs, 0.707, 0.571);
     // reverb.diffusion(0.76, 0.666, 0.707, 0.571);
 
     // cross_angle_mean_square = (rot - ao / 180).mag();
@@ -339,13 +340,17 @@ struct MyApp : App
 
         value.set(p.left);
 
-        float fl = mFilter(p.left);
-        float fr = mFilter(p.right);
+        // float fl = mFilter(p.left);
+        // float fr = mFilter(p.right);
+// no filter
+        float fl = (p.left);
+        float fr = (p.right);
+
         float rv_r1, rv_l1, rv_r2, rv_l2 ;
         // reverb(fl , rv_r1, rv_l1);
         rv_r1 = fr;
         rv_l1 = fl;
-        // reverb(fr , rv_r2, rv_l2);
+        reverb(fr , rv_r2, rv_l2);
         // fl = rv_r1 + rv_r2;
         // fr = rv_l1 + rv_l2;
         // io.out(0) = (fl);
