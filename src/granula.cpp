@@ -147,14 +147,14 @@ struct Granulator {
 
   // gui tweakable parameters
   //
-  ParameterInt whichClip{"/clip", "", 0, "", 0, 9};
+  ParameterInt whichClip{"/clip", "", 0, "", 0, 14};
   Parameter grainDuration{"/duration", "", 0.25, "", 0.001, 2.0};
   Parameter startPosition{"/position", "", 0.25, "", 0.0, 1.0};
   Parameter peakPosition{"/envelope", "", 0.1, "", 0.0, 1.0};
   Parameter amplitudePeak{"/amplitude", "", 0.707, "", 0.0, 1.0};
   Parameter panPosition{"/pan", "", 0.5, "", 0.0, 1.0};
   Parameter playbackRate{"/playback", "", 0.0, "", -1.0, 1.0};
-  Parameter birthRate{"/frequency", "", 55, "", 0, 1000};
+  Parameter birthRate{"/frequency", "", 20, "", 0, 1000};
 
   // this oscillator governs the rate at which grains are created
   //

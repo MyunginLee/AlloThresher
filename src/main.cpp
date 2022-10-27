@@ -75,6 +75,8 @@ struct MyApp : App
   float imag_power, amag_power, cross_angle_mean_square;
   gam::Biquad<> mFilter{};
   Reverb<float> reverb;
+  int fbh, fbw;
+  float fb_idx; // frame blur width, height
 
   void onInit() override
   {
@@ -126,7 +128,10 @@ struct MyApp : App
 
     // prepare Waveform
     texture.create2D(N / 2, N / 2, Texture::RGB8);
-    texBlur.resize(fbWidth(), fbHeight());
+    fb_idx = 5;
+    fbw = fbWidth()*fb_idx;
+    fbh = fbHeight()*fb_idx;
+    texBlur.resize(fbw, fbh);
 
     int Mx = texture.width();
     int My = texture.height();
@@ -148,17 +153,20 @@ struct MyApp : App
     }
 
     // load sound files into the
-    granulator.load("source/0.wav");
-    granulator.load("source/1.wav");
-    granulator.load("source/2.wav");
-    granulator.load("source/3.wav");
-    granulator.load("source/4.wav");
-    granulator.load("source/5.wav");
-    granulator.load("source/6.wav");
-    granulator.load("source/7.wav");
-    granulator.load("source/8.wav");
-    granulator.load("source/9.wav");
-
+    granulator.load("source/0_dub.wav");
+    granulator.load("source/1_oingd.wav");
+    granulator.load("source/2_nidea.wav");
+    granulator.load("source/3_atz.wav");
+    granulator.load("source/4_glitch.wav");
+    granulator.load("source/5_click.wav");
+    granulator.load("source/6_beatbox.wav");
+    granulator.load("source/7_pew.wav");
+    granulator.load("source/8_harpsi.wav");
+    granulator.load("source/9_violin.wav");
+    granulator.load("source/10_sponge.wav");
+    granulator.load("source/11_drugs.wav");
+    granulator.load("source/12_kor.wav");
+    granulator.load("source/13_mong.wav");
     gui.init();
     /*
     gui.addr(presetHandler,  //
@@ -204,7 +212,7 @@ struct MyApp : App
 
     // granular source command is determined by the android angle,, **
     // cout << ao.x << " " <<     int( (ao.x+180) / 36)<< endl; 
-    gest_command = int( (ao.x+180) / 36);
+    gest_command = int( (ao.x+180) / 26);
     // Power of acceleration.
     acc_abs = cbrt(cell_acc.x * cell_acc.x + cell_acc.y * cell_acc.y + cell_acc.z * cell_acc.z) * 0.1;
     android_acc_abs = cbrt(aa.x*aa.x + aa.y*aa.y + aa.z*aa.z) * 0.02;
@@ -225,7 +233,7 @@ struct MyApp : App
     // reverb realtime
     // reverb.bandwidth(0.9f); // Low-pass amount on input, in [0,1]
     // reverb.damping(android_acc_abs);   // High-frequency damping, in [0,1]
-    reverb.decay(0.1f+acc_abs);     // Tail decay factor, in [0,1]
+    reverb.decay(0.6f+0.1*acc_abs);     // Tail decay factor, in [0,1]
 
     // Diffusion amounts
     // Values near 0.7 are recommended. Moving further away from 0.7 will lead
@@ -249,21 +257,27 @@ struct MyApp : App
     background = 0.0;
 
     g.clear(background);
-    texBlur.resize(fbWidth(), fbHeight());
-    g.tint(0.98 - 0.1 * acc_abs);
-    g.tint(0.98 + 0.05 * acc_abs);
-
+    fbw = fbWidth()*fb_idx;
+    fbh = fbHeight()*fb_idx;
+    texBlur.resize(fbw, fbh); // index = 5
+    // g.tint(0.98 - 0.1 * acc_abs);
+    // g.tint(0.88 + 0.05 * acc_abs); // proper ?
+    g.tint(0.93 + 0.05 * acc_abs); // proper ?
     // g.quadViewport(texBlur, -1.005, -1.005, 2.01, 2.01); // Outward
     // g.quadViewport(texBlur, -1. - android_acc_abs*0.1, -1.- android_acc_abs*0.1
     //               , 2 + android_acc_abs*0.2, 2 + android_acc_abs*0.2); // Outward. good straight!
-    float bnf = aa.mag()*0.01;
-    g.quadViewport(texBlur, -1. - bnf*0.1, -1.- bnf*0.1
-                  , 2 + bnf*0.2, 2 + bnf*0.2); // Outward. back and fowards!
+    float direction = -ao.y / 9000;
+    float bnf = aa.magSqr() * direction;
+    g.quadViewport(texBlur, -1. - bnf*0.1, 
+                            -1. - bnf*0.1
+                  , 2*fb_idx + bnf*0.2*fb_idx, 
+                  2*fb_idx + bnf*0.2*fb_idx ); // Outward. back and fowards!
     // g.quadViewport(texBlur, -0.995, -0.995, 1.99, 1.99); // Inward
     // g.quadViewport(texBlur, -1.005, -1.00, 2.01, 2.0);   // Oblate
     // g.quadViewport(texBlur, -1.005, -0.995, 2.01, 1.99); // Squeeze
     // g.quadViewport(texBlur, -1, -1, 2, 2);               // non-transformed
     g.tint(1); // set tint back to 1
+    // shade_texture.bind();
 
     // Draw Controller Shader
     g.depthTesting(false);
@@ -282,7 +296,7 @@ struct MyApp : App
     g.shader().uniform("halfSize", 0.05);
     // g.draw(pointMesh);
     g.popMatrix();
-    shade_texture.unbind();
+    // shade_texture.unbind();
     // Draw Waveform
     g.pushMatrix();
     // g.translate(0, 0, 0);
