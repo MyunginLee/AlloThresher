@@ -203,7 +203,7 @@ struct Granulator {
   diy::FloatPair operator()() {
     // figure out if we should generate (reincarnate) more grains; then do so.
     //
-    birthRate = 10 + tan(acc_abs);
+    birthRate = 10 + 0.1*tan(acc_abs);
     grainBirth.frequency(birthRate);
     if (grainBirth()) {
       // we want to birth a new grain
