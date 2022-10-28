@@ -1,5 +1,7 @@
 #include "configuration.h"
 #include "granula.cpp"
+#include "al/sphere/al_SphereUtils.hpp"
+
 using namespace al;
 using namespace gam;
 using namespace ben;
@@ -7,6 +9,8 @@ using namespace diy;
 
 using namespace std;
 #define FFT_SIZE 4048
+static bool fullscreen = true;
+
 // struct CommonState
 // {
 
@@ -170,13 +174,22 @@ struct MyApp : App
   Reverb<float> reverb;
   int fbh, fbw;
   float fb_idx; // frame blur width, height
-
+  void PlatformSetupSize()
+  {
+    int total_width, total_height;
+    al::sphere::getFullscreenDimension(&total_width, &total_height);
+    std::cout << total_width << ", " << total_height << std::endl;
+    dimensions(0, 0, total_width, total_height);
+  }
   void onInit() override
   {
     // registerDynamicScene(scene);
     // scene.setDefaultUserData(&this->agentCommon);
     // scene.registerSynthClass<AndroidSynth>("androidsynth");
-
+    if (al_get_hostname() == "moxi" || fullscreen)
+    {
+      PlatformSetupSize();
+    }
 
     // auto newAndroid = scene.allocateVoice<AndroidSynth>();
     // andsynth.push_back(newAndroid);
@@ -191,7 +204,7 @@ struct MyApp : App
     // Values near 0.7 are recommended. Moving further away from 0.7 will lead
     // to more distinct echoes.
     reverb.diffusion(0.76, 0.666, 0.707, 0.571);
-    audioIO().print();
+    // audioIO().print();
   }
 
   void onCreate() override
@@ -229,7 +242,7 @@ struct MyApp : App
 
     // prepare Waveform
     texture.create2D(N / 2, N / 2, Texture::RGB8);
-    fb_idx = 5;
+    fb_idx = 1;
     fbw = fbWidth()*fb_idx;
     fbh = fbHeight()*fb_idx;
     texBlur.resize(fbw, fbh);
@@ -268,10 +281,12 @@ struct MyApp : App
     granulator.load("source/8_harpsi.wav");
     granulator.load("source/9_violin.wav");
     granulator.load("source/10_sponge.wav");
-    granulator.load("source/11_drugs.wav");
+    granulator.load("source/11_lux.wav");
+    // granulator.load("source/11_drugs.wav");
     granulator.load("source/12_kor.wav");
     granulator.load("source/13_mong.wav");
-    granulator.load("source/14_cannon.wav");
+    granulator.load("source/14_gong.wav");
+    // granulator.load("source/14_cannon.wav");
     gui.init();
     /*
     gui.addr(presetHandler,  //
