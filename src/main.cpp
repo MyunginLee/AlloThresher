@@ -263,7 +263,8 @@ struct MyApp : DistributedAppWithState<CommonState>
     granulator.load("source/4_glitch.wav");
     granulator.load("source/5_click.wav");
     granulator.load("source/6_beatbox.wav");
-    granulator.load("source/7_pew.wav");
+    // granulator.load("source/7_pew.wav");
+    granulator.load("source/7_oingd.wav");
     granulator.load("source/8_harpsi.wav");
     granulator.load("source/9_violin.wav");
     granulator.load("source/10_sponge.wav");
@@ -368,7 +369,10 @@ struct MyApp : DistributedAppWithState<CommonState>
     // g.tint(0.98 - 0.1 * acc_abs);
     // g.tint(0.88 + 0.05 * acc_abs); // proper ?
 
-    g.tint(0.93 + 0.05 * acc_abs); // proper ?
+    // g.tint(0.93 + 0.05 * acc_abs); // proper ?
+    g.tint(0.91 + 0.01 * acc_abs); // proper ?
+
+
     // g.quadViewport(texBlur, -1.005, -1.005, 2.01, 2.01); // Outward
     // g.quadViewport(texBlur, -1. - android_acc_abs*0.1, -1.- android_acc_abs*0.1
     //               , 2 + android_acc_abs*0.2, 2 + android_acc_abs*0.2); // Outward. good straight!
