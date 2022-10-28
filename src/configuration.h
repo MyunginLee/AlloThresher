@@ -1,15 +1,15 @@
 #ifndef __whak
 #define __whak
 
-// #include "al/app/al_App.hpp"
-#include "al/app/al_DistributedApp.hpp"
+#include "al/app/al_App.hpp"
+// #include "al/app/al_DistributedApp.hpp"
 #include "al/ui/al_ControlGUI.hpp"
 #include "al/ui/al_Parameter.hpp"
 #include "al/ui/al_PresetHandler.hpp"
 #include "al/ui/al_PresetServer.hpp"
 #include "al/sound/al_Reverb.hpp"
-#include "al_ext/assets3d/al_Asset.hpp"
-#include "al_ext/statedistribution/al_CuttleboneStateSimulationDomain.hpp"
+// #include "al_ext/assets3d/al_Asset.hpp"
+// #include "al_ext/statedistribution/al_CuttleboneStateSimulationDomain.hpp"
 
 #include "synths.h"
 #include "Gamma/Noise.h"
