@@ -3,4 +3,4 @@
 	url = https://github.com/AlloSphere-Research-Group/allolib.git
 [submodule "al_ext"]
 	path = al_ext
-	url = https://github.com/AlloSphere-Research-Group/al_ext.git
+	url = git@github.com:AlloSphere-Research-Group/al_ext.git
