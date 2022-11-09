@@ -371,14 +371,14 @@ struct MyApp : DistributedAppWithState<CommonState>
     // g.tint(0.88 + 0.05 * acc_abs); // proper ?
 
     // g.tint(0.93 + 0.05 * acc_abs); // proper ?
-    g.tint(0.91 + 0.01 * acc_abs); // proper ?
+    g.tint(0.91 + 0.01 * acc_abs + (ao.y+180)/10); // proper ?
 
 
     // g.quadViewport(texBlur, -1.005, -1.005, 2.01, 2.01); // Outward
     // g.quadViewport(texBlur, -1. - android_acc_abs*0.1, -1.- android_acc_abs*0.1
     //               , 2 + android_acc_abs*0.2, 2 + android_acc_abs*0.2); // Outward. good straight!
     float direction = -ao.y / 9000;
-    float bnf = aa.magSqr() * direction + 0.1f+0.8*(ao.y+180)/360;
+    float bnf = aa.magSqr() * direction + 0.1f + (ao.y+180)/10;
 
     lens().near(0.1).far(1000).fovy(90+ 10 * bnf); // lens view angle, how far
 
@@ -425,17 +425,18 @@ struct MyApp : DistributedAppWithState<CommonState>
     // g.rotate(cell_acc.x * 100, Vec3f(rot.x, 0, 0));
     // g.rotate(cell_acc.y * 100, Vec3f(0, rot.y, 0));
     // g.rotate(cell_acc.z * 100, mFilter3f(cell_grv.x, 0, 0));
-    g.rotate(cell_acc.y * 100, Vec3f(0, cell_grv.y, 0));
-    g.rotate(cell_acc.z * 100, Vec3f(0, 0, cell_grv.z));
+    // g.rotate(cell_acc.y * 100, Vec3f(0, cell_grv.y, 0));
+    // g.rotate(cell_acc.z * 100, Vec3f(0, 0, cell_grv.z));
     g.scale(0.1, 10, 1);
     g.pointSize(acc_abs * 3);
     for (int i = 0; i < FFT_SIZE / 2; i++)
     {
       mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs * 100), al::rnd::uniformS(acc_abs)+ spectrum[i] * 1000, 1 + spectrum[i] * 100 + 0.5 * al::rnd::uniformS(acc_abs)));
       // mSpectrogram.vertex(cos(i) *(1 + 10 * cos(spectrum[i])), sin(i) * (1+ 10 * sin(spectrum[i])), 0.0);
-      mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
-      , 10*sin(0.01*i+cell_acc.z * 100)*cos(0.1*i*android_acc_abs)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) );
-    }
+      // mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
+      // , 10*sin(0.01*i+cell_acc.z * 100)*cos(0.1*i*android_acc_abs)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) );
+      mSpectrogram.vertex( ( 0.01 * i ) 
+      , 100* spectrum[i] , 0 );    }
     // cout << android_acc_abs << endl;
     g.draw(mSpectrogram);
     g.popMatrix();

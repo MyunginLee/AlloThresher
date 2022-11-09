@@ -378,7 +378,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     // g.quadViewport(texBlur, -1. - android_acc_abs*0.1, -1.- android_acc_abs*0.1
     //               , 2 + android_acc_abs*0.2, 2 + android_acc_abs*0.2); // Outward. good straight!
     float direction = -ao.y / 9000;
-    float bnf = aa.magSqr() * direction + 0.1f+0.8*(ao.y+180)/360;
+    float bnf = aa.magSqr() * direction + 0.1f+0.8*(ao.y+180)/100;
 
     lens().near(0.1).far(1000).fovy(90+ 10 * bnf); // lens view angle, how far
 
@@ -433,9 +433,10 @@ struct MyApp : DistributedAppWithState<CommonState>
     {
       mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs * 100), al::rnd::uniformS(acc_abs)+ spectrum[i] * 1000, 1 + spectrum[i] * 100 + 0.5 * al::rnd::uniformS(acc_abs)));
       // mSpectrogram.vertex(cos(i) *(1 + 10 * cos(spectrum[i])), sin(i) * (1+ 10 * sin(spectrum[i])), 0.0);
+      // mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
+      // , 10*sin(0.01*i+cell_acc.z * 100)*cos(0.1*i*android_acc_abs)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) );
       mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
-      , 10*sin(0.01*i+cell_acc.z * 100)*cos(0.1*i*android_acc_abs)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) );
-    }
+      , 10*sin(0.01*i+cell_acc.z * 100)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) *100* spectrum[i]);    }
     // cout << android_acc_abs << endl;
     g.draw(mSpectrogram);
     g.popMatrix();
