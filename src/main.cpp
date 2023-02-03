@@ -271,7 +271,8 @@ struct MyApp : App
     granulator.load("source/11_drugs.wav");
     granulator.load("source/12_kor.wav");
     granulator.load("source/13_mong.wav");
-    granulator.load("source/14_cannon.wav");
+    // granulator.load("source/14_cannon.wav");
+    granulator.load("source/14_kroll.wav");
     gui.init();
     /*
     gui.addr(presetHandler,  //
