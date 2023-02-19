@@ -286,6 +286,8 @@ struct MyApp : App
     granulator.load("source/12_kor.wav");
     granulator.load("source/13_mong.wav");
     granulator.load("source/14_gong.wav");
+    granulator.load("source/15_improv.wav");
+    granulator.load("source/16_sanjo.wav");
     // granulator.load("source/14_cannon.wav");
     gui.init();
     /*
@@ -332,7 +334,7 @@ struct MyApp : App
 
     // granular source command is determined by the android angle,, **
     // cout << ao.x << " " <<     int( (ao.x+180) / 36)<< endl; 
-    gest_command = int( (ao.x+180) / 24);
+    gest_command = int( (ao.x+180) / 22);
     // Power of acceleration.
     acc_abs = cbrt(cell_acc.x * cell_acc.x + cell_acc.y * cell_acc.y + cell_acc.z * cell_acc.z) * 0.1;
     android_acc_abs = cbrt(aa.x*aa.x + aa.y*aa.y + aa.z*aa.z) * 0.02;
