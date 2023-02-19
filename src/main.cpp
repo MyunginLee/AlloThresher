@@ -4,6 +4,7 @@ using namespace al;
 using namespace gam;
 using namespace ben;
 using namespace diy;
+static bool fullscreen = true;
 
 using namespace std;
 #define FFT_SIZE 4048
@@ -128,7 +129,6 @@ struct MyApp : DistributedAppWithState<CommonState>
   DistributedScene scene;
   vector<AndroidSynth *> andsynth;
   AgentCommonData agentCommon;
-  Scene *ascene{nullptr};
 
   // AndroidSynth synth;
   ControlGUI gui;
@@ -169,9 +169,19 @@ struct MyApp : DistributedAppWithState<CommonState>
   Reverb<float> reverb;
   int fbh, fbw;
   float fb_idx; // frame blur width, height
-
+  void PlatformSetupSize()
+  {
+    int total_width, total_height;
+    al::sphere::getFullscreenDimension(&total_width, &total_height);
+    std::cout << total_width << ", " << total_height << std::endl;
+    dimensions(0, 0, total_width, total_height);
+  }
   void onInit() override
   {
+    if (al_get_hostname() == "moxi" || fullscreen)
+    {
+      PlatformSetupSize();
+    }
     registerDynamicScene(scene);
     scene.setDefaultUserData(&this->agentCommon);
     scene.registerSynthClass<AndroidSynth>("androidsynth");
