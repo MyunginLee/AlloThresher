@@ -176,7 +176,7 @@ struct Granulator {
     // amplitudePeak = acc_abs * 2;
     
     // Android match
-    startPosition = (ao.x +180 ) / 360;// 0~1
+    startPosition = (ao.y +180 ) / 360;// 0~1
     playbackRate = cell_grv.x;
     peakPosition = (ao.y +180 ) / 360;
     amplitudePeak = acc_abs * 2;
