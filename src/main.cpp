@@ -270,8 +270,8 @@ struct MyApp : DistributedAppWithState<CommonState>
     // granulator.load("source/2_nidea.wav");
     granulator.load("source/2_dontcare.wav");
     granulator.load("source/3_atz.wav");
-    granulator.load("source/4_glitch.wav");
-    granulator.load("source/5_click.wav");
+    granulator.load("source/4_click.wav");
+    granulator.load("source/5_jazz.wav");
     granulator.load("source/6_beatbox.wav");
     granulator.load("source/7_oingd.wav");
     // granulator.load("source/7_pew.wav");
@@ -284,7 +284,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     // granulator.load("source/11_drugs.wav");
     granulator.load("source/14_kor.wav");
     granulator.load("source/15_sanjo.wav");
-    granulator.load("source/16_jazz.wav");
+    // granulator.load("source/16_jazz.wav");
     // granulator.load("source/17_jazz.wav");
     gui.init();
     /*
@@ -331,8 +331,8 @@ struct MyApp : DistributedAppWithState<CommonState>
 
     // granular source command is determined by the android angle,, **
     // cout << ao.x << " " <<     int( (ao.x+180) / 36)<< endl; 
-    gest_command = int( (ao.x+180) / 22);
-    // cout << gest_command << endl;
+    gest_command = int( (ao.x+180) / 23);
+    // cout << gest_command;
     // Power of acceleration.
     acc_abs = cbrt(cell_acc.x * cell_acc.x + cell_acc.y * cell_acc.y + cell_acc.z * cell_acc.z) * 0.1;
     android_acc_abs = cbrt(aa.x*aa.x + aa.y*aa.y + aa.z*aa.z) * 0.02;
@@ -356,7 +356,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     // reverb realtime
     // reverb.bandwidth(0.9f); // Low-pass amount on input, in [0,1]
     // reverb.damping(android_acc_abs);   // High-frequency damping, in [0,1]
-    reverb.decay(0.1*acc_abs+(-ao.y+90)/180);     // Tail decay factor, in [0,1]
+    reverb.decay(0.1*acc_abs+(-ao.y)/90);     // Tail decay factor, in [0,1]
     // cout << ao.x << "  " << ao.y << "  "  << ao.z << endl;
     // reverb.damping(0.1f+0.8*(ao.y+180)/360);   // High-frequency damping, in [0,1]
     scene.update(dt);
@@ -400,7 +400,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     float bnf = aa.magSqr() * direction + 0.1f+0.8*(ao.y+180)/100;
 
     lens().near(0.1).far(1000).fovy(90+ 10 * bnf); // lens view angle, how far
-    cout << bnf << endl;
+    // cout << bnf << endl;
     g.quadViewport(texBlur, -1. - bnf*0.1, 
                             -1. - bnf*0.1
                   , 2*fb_idx + bnf*0.2*fb_idx, 
@@ -447,7 +447,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     g.rotate(cell_acc.y * 100, Vec3f(0, cell_grv.y, 0));
     g.rotate(cell_acc.z * 100, Vec3f(0, 0, cell_grv.z));
     g.scale(0.1, 10, 1);
-    g.pointSize(acc_abs * 3);
+    g.pointSize(acc_abs * 8);
     for (int i = 0; i < FFT_SIZE / 2; i++)
     {
       mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs * 100), al::rnd::uniformS(acc_abs)+ spectrum[i] * 1000, 1 + spectrum[i] * 100 + 0.5 * al::rnd::uniformS(acc_abs)));
@@ -552,7 +552,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     }
     else if (m.addressPattern() == string("/gyrosc/button"))
     {
-      m >> gest_command;
+      // m >> gest_command;
     }
     // else if (m.addressPattern() == string("/gyrosc/mag"))
     // {

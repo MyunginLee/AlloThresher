@@ -178,10 +178,10 @@ struct Granulator {
     // amplitudePeak = acc_abs * 2;
     
     // Android match
-    startPosition = (ao.y +90 ) / 180;// 0~1
-    // cout <<"  "<< startPosition << endl;
+    startPosition = (ao.z +180 ) / 360;// 0~1
+    cout << startPosition << endl;
     playbackRate = cell_grv.x;
-    peakPosition = (ao.y +180 ) / 360;
+    peakPosition = (ao.z +180 ) / 360;
     amplitudePeak = acc_abs * 2;
 
     // cout << grainDuration << startPosition << playbackRate << endl;
@@ -207,7 +207,7 @@ struct Granulator {
     // figure out if we should generate (reincarnate) more grains; then do so.
     //
     // birthRate = 10 + 0.1*tan(acc_abs);
-   birthRate = 10 + 200 * (cell_rot.x+1.5);
+   birthRate = 10 + 0.1*tan(acc_abs) + 10 * (cell_rot.x+1.5);
    grainBirth.frequency(birthRate);
     //  cout << "    "  << birthRate << endl;
     if (grainBirth()) {
