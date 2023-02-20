@@ -400,7 +400,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     float bnf = aa.magSqr() * direction + 0.1f+0.8*(ao.y+180)/100;
 
     lens().near(0.1).far(1000).fovy(90+ 10 * bnf); // lens view angle, how far
-
+    cout << bnf << endl;
     g.quadViewport(texBlur, -1. - bnf*0.1, 
                             -1. - bnf*0.1
                   , 2*fb_idx + bnf*0.2*fb_idx, 
