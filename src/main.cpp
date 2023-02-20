@@ -89,31 +89,31 @@ void onProcess(AudioIOData &io) override
   {
     while (io())
     {
-        // mix oscillator with noise
-        float s1 = mOsc() * (1 - noise) + mNoise() * noise;
+        // // mix oscillator with noise
+        // float s1 = mOsc() * (1 - noise) + mNoise() * noise;
 
-        // apply resonant filter
-        mRes.set(mCFEnv(), mBWEnv());
-        s1 = mRes(s1);
-        s1 = mOsc();
+        // // apply resonant filter
+        // mRes.set(mCFEnv(), mBWEnv());
+        // s1 = mRes(s1);
+        // s1 = mOsc();
 
-        // appy amplitude envelope
-        // s1 *= mAmpEnv() * amp;
-        float wet1, wet2;
-        reverb(s1, wet1, wet2);
+        // // appy amplitude envelope
+        // // s1 *= mAmpEnv() * amp;
+        // float wet1, wet2;
+        // reverb(s1, wet1, wet2);
 
-        mEnvFollow(wet1);
-        mPan(wet1, wet1, wet2);
-			  if(stft(wet1)){
-          for (unsigned k = 0; k < stft.numBins(); ++k)
-          {
-              // Here we simply scale the complex sample
-              spectrum[k] = tanh(pow(stft.bin(k).real(), 1.3));
-          }
+        // mEnvFollow(wet1);
+        // mPan(wet1, wet1, wet2);
+			  // if(stft(wet1)){
+        //   for (unsigned k = 0; k < stft.numBins(); ++k)
+        //   {
+        //       // Here we simply scale the complex sample
+        //       spectrum[k] = tanh(pow(stft.bin(k).real(), 1.3));
+        //   }
 
-          io.out(0) += wet1;
-          io.out(1) += wet2;
-        }
+        //   io.out(0) += wet1;
+        //   io.out(1) += wet2;
+        // }
     }
   }
   void onTriggerOn() override
@@ -143,7 +143,8 @@ struct MyApp : DistributedAppWithState<CommonState>
   bool showSpectro = true;
   bool navi = false;
   gam::STFT stft = gam::STFT(FFT_SIZE, FFT_SIZE / 4, 0, gam::HANN, gam::MAG_FREQ);
-  
+  gam::Pan<> mPan;
+
   // Right hand : iPhone
   Vec3f cell_acc, cell_grv;
   Quatf cell_rot;
@@ -298,7 +299,7 @@ struct MyApp : DistributedAppWithState<CommonState>
         << granulator.whichClip << granulator.grainDuration
         << granulator.startPosition << granulator.peakPosition
         << granulator.amplitudePeak << granulator.panPosition
-        << granulator.playbackRate << granulator.birthRate << active << value;
+        << granulator.playbackRate << granulator.birthRate << active;
 
     presetHandler << granulator.whichClip << granulator.grainDuration
                   << granulator.startPosition << granulator.peakPosition
@@ -461,7 +462,8 @@ struct MyApp : DistributedAppWithState<CommonState>
     g.popMatrix();
     texBlur.copyFrameBuffer();
 
-    // gui.draw(g);
+    
+    gui.draw(g);
   }
 
   void onSound(AudioIOData &io) override
@@ -507,6 +509,8 @@ struct MyApp : DistributedAppWithState<CommonState>
         // io.out(0) = (fl);
         // io.out(1) = (fr);
         // cout << rv_l1<< endl;
+        mPan.pos(0.02*cell_rot.z);
+        mPan(rv_l2, rv_l2, rv_r2);
         io.out(0) = (rv_r2);
         io.out(1) = (rv_l2);
 
@@ -549,6 +553,7 @@ struct MyApp : DistributedAppWithState<CommonState>
       m >> cell_rot.x;
       m >> cell_rot.y;
       m >> cell_rot.z;
+      // cout << cell_rot.z << endl;
     }
     else if (m.addressPattern() == string("/gyrosc/button"))
     {
