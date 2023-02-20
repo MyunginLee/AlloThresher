@@ -101,6 +101,7 @@ bool bad(float x) {
 struct Granulator {
   vector<diy::Array> arrayList;
   Vec3f cell_acc, cell_grv;
+  Quatf cell_rot;
   Vec3f aa, ao;
   float acc_abs;
   int gest_command;
@@ -147,7 +148,7 @@ struct Granulator {
 
   // gui tweakable parameters
   //
-  ParameterInt whichClip{"/clip", "", 0, "", 0, 14};
+  ParameterInt whichClip{"/clip", "", 0, "", 0, 17};
   Parameter grainDuration{"/duration", "", 0.25, "", 0.001, 2.0};
   Parameter startPosition{"/position", "", 0.25, "", 0.0, 1.0};
   Parameter peakPosition{"/envelope", "", 0.1, "", 0.0, 1.0};
@@ -168,7 +169,8 @@ struct Granulator {
     g.source = &arrayList[whichClip];
 
     // // map gestural data to input
-    grainDuration = acc_abs * 0.5; 
+    // grainDuration = acc_abs * 0.5; 
+    grainDuration = acc_abs * 4.; 
     // TODO . match with android ao
     // startPosition = (cell_grv.y+1)/2;
     // playbackRate = cell_grv.x;
@@ -176,7 +178,8 @@ struct Granulator {
     // amplitudePeak = acc_abs * 2;
     
     // Android match
-    startPosition = (ao.y +180 ) / 360;// 0~1
+    startPosition = (ao.y +90 ) / 180;// 0~1
+    // cout <<"  "<< startPosition << endl;
     playbackRate = cell_grv.x;
     peakPosition = (ao.y +180 ) / 360;
     amplitudePeak = acc_abs * 2;
@@ -203,8 +206,10 @@ struct Granulator {
   diy::FloatPair operator()() {
     // figure out if we should generate (reincarnate) more grains; then do so.
     //
-    birthRate = 10 + 0.1*tan(acc_abs);
-    grainBirth.frequency(birthRate);
+    // birthRate = 10 + 0.1*tan(acc_abs);
+   birthRate = 10 + 200 * (cell_rot.x+1.5);
+   grainBirth.frequency(birthRate);
+    //  cout << "    "  << birthRate << endl;
     if (grainBirth()) {
       // we want to birth a new grain
       if (manager.has_inactive()) {

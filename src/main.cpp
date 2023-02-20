@@ -144,7 +144,9 @@ struct MyApp : DistributedAppWithState<CommonState>
   bool navi = false;
   gam::STFT stft = gam::STFT(FFT_SIZE, FFT_SIZE / 4, 0, gam::HANN, gam::MAG_FREQ);
   
+  // Right hand : iPhone
   Vec3f cell_acc, cell_grv;
+  Quatf cell_rot;
   float acc_abs, android_acc_abs, filter_coeff;
   float *grv_block;
   float *acc_block;
@@ -161,7 +163,6 @@ struct MyApp : DistributedAppWithState<CommonState>
 
   Mesh pointMesh;
   int gest_command;
-  Quatf rot;
   Vec3f imag, amag;
   Vec3f aa, ao;
   float imag_power, amag_power, cross_angle_mean_square;
@@ -269,11 +270,11 @@ struct MyApp : DistributedAppWithState<CommonState>
     // granulator.load("source/2_nidea.wav");
     granulator.load("source/2_dontcare.wav");
     granulator.load("source/3_atz.wav");
-    granulator.load("source/4_glitch.wav");
-    granulator.load("source/5_click.wav");
-    granulator.load("source/6_beatbox.wav");
+    granulator.load("source/4_beatbox.wav");
+    granulator.load("source/5_oingd.wav");
+    granulator.load("source/6_glitch.wav");
+    granulator.load("source/7_click.wav");
     // granulator.load("source/7_pew.wav");
-    granulator.load("source/7_oingd.wav");
     granulator.load("source/8_harpsi.wav");
     granulator.load("source/9_violin.wav");
     granulator.load("source/10_sponge.wav");
@@ -281,9 +282,10 @@ struct MyApp : DistributedAppWithState<CommonState>
     granulator.load("source/11_lux.wav");
     granulator.load("source/12_kor.wav");
     granulator.load("source/13_mong.wav");
-    granulator.load("source/14_improv.wav");
+    granulator.load("source/14_emile.wav");
     granulator.load("source/15_sanjo.wav");
     granulator.load("source/16_jazz.wav");
+    // granulator.load("source/17_jazz.wav");
     gui.init();
     /*
     gui.addr(presetHandler,  //
@@ -330,6 +332,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     // granular source command is determined by the android angle,, **
     // cout << ao.x << " " <<     int( (ao.x+180) / 36)<< endl; 
     gest_command = int( (ao.x+180) / 22);
+    // cout << gest_command << endl;
     // Power of acceleration.
     acc_abs = cbrt(cell_acc.x * cell_acc.x + cell_acc.y * cell_acc.y + cell_acc.z * cell_acc.z) * 0.1;
     android_acc_abs = cbrt(aa.x*aa.x + aa.y*aa.y + aa.z*aa.z) * 0.02;
@@ -338,6 +341,9 @@ struct MyApp : DistributedAppWithState<CommonState>
     // cout << android_acc_abs << endl; // Print android acc 
     granulator.cell_acc = cell_acc;
     granulator.cell_grv = cell_grv;
+    granulator.cell_rot = cell_rot;
+    // cout << cell_rot.x << endl;
+
     granulator.acc_abs = acc_abs;
     granulator.gest_command = gest_command;
     granulator.ao = ao;
@@ -350,7 +356,8 @@ struct MyApp : DistributedAppWithState<CommonState>
     // reverb realtime
     // reverb.bandwidth(0.9f); // Low-pass amount on input, in [0,1]
     // reverb.damping(android_acc_abs);   // High-frequency damping, in [0,1]
-    reverb.decay(0.1*acc_abs+(ao.z+180)/360);     // Tail decay factor, in [0,1]
+    reverb.decay(0.1*acc_abs+(-ao.y+90)/180);     // Tail decay factor, in [0,1]
+    // cout << ao.x << "  " << ao.y << "  "  << ao.z << endl;
     // reverb.damping(0.1f+0.8*(ao.y+180)/360);   // High-frequency damping, in [0,1]
     scene.update(dt);
 
@@ -411,7 +418,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     g.blending(true);
     g.blendTrans();
     g.pushMatrix();
-    g.translate(rot.x * 2, rot.y * 2, rot.z * 0.1);
+    g.translate(cell_rot.x * 2, cell_rot.y * 2, cell_rot.z * 0.1);
     // pointMesh.color(abs(cell_grv.x)*100, abs(cell_grv.y)*100, abs(cell_grv.z)*100);
     // pointMesh.color(HSV(acc_abs * 100, 1 + al::rnd::uniform(), 1 + al::rnd::uniform()));
     mSpectrogram.reset();
@@ -539,9 +546,9 @@ struct MyApp : DistributedAppWithState<CommonState>
     }
     else if (m.addressPattern() == string("/gyrosc/gyro"))
     {
-      m >> rot.x;
-      m >> rot.y;
-      m >> rot.z;
+      m >> cell_rot.x;
+      m >> cell_rot.y;
+      m >> cell_rot.z;
     }
     else if (m.addressPattern() == string("/gyrosc/button"))
     {
