@@ -351,7 +351,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     // reverb.bandwidth(0.9f); // Low-pass amount on input, in [0,1]
     // reverb.damping(android_acc_abs);   // High-frequency damping, in [0,1]
     reverb.decay(0.1*acc_abs+(ao.z+180)/360);     // Tail decay factor, in [0,1]
-    reverb.damping(0.1f+0.8*(ao.y+180)/360);   // High-frequency damping, in [0,1]
+    // reverb.damping(0.1f+0.8*(ao.y+180)/360);   // High-frequency damping, in [0,1]
     scene.update(dt);
 
     // Diffusion amounts
