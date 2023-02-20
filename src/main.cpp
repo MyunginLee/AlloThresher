@@ -238,7 +238,7 @@ struct MyApp : DistributedAppWithState<CommonState>
 
     // prepare Waveform
     texture.create2D(N / 2, N / 2, Texture::RGB8);
-    fb_idx = 5;
+    fb_idx = 1;
     fbw = fbWidth()*fb_idx;
     fbh = fbHeight()*fb_idx;
     texBlur.resize(fbw, fbh);
