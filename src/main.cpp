@@ -344,7 +344,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     granulator.cell_grv = cell_grv;
     granulator.cell_rot = cell_rot;
     // cout << cell_rot.x << endl;
-
+    granulator.panPosition = -0.05*cell_rot.z;
     granulator.acc_abs = acc_abs;
     granulator.gest_command = gest_command;
     granulator.ao = ao;
@@ -462,8 +462,8 @@ struct MyApp : DistributedAppWithState<CommonState>
     g.popMatrix();
     texBlur.copyFrameBuffer();
 
-    
-    gui.draw(g);
+    if(showGUI)
+      gui.draw(g);
   }
 
   void onSound(AudioIOData &io) override
@@ -509,7 +509,7 @@ struct MyApp : DistributedAppWithState<CommonState>
         // io.out(0) = (fl);
         // io.out(1) = (fr);
         // cout << rv_l1<< endl;
-        mPan.pos(0.02*cell_rot.z);
+        mPan.pos(-granulator.panPosition);
         mPan(rv_l2, rv_l2, rv_r2);
         io.out(0) = (rv_r2);
         io.out(1) = (rv_l2);
@@ -529,6 +529,16 @@ struct MyApp : DistributedAppWithState<CommonState>
     {
       std::cerr << "Out of Range error: " << e.what() << '\n';
     }
+  }
+  bool onKeyDown(Keyboard const &k) override
+  {
+    switch (k.key())
+    {
+    case ' ':
+      showGUI = !showGUI;
+      break;
+    }
+    return true;
   }
 
   void onMessage(osc::Message &m) override

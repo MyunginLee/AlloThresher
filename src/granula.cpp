@@ -153,8 +153,8 @@ struct Granulator {
   Parameter startPosition{"/position", "", 0.25, "", 0.0, 1.0};
   Parameter peakPosition{"/envelope", "", 0.1, "", 0.0, 1.0};
   Parameter amplitudePeak{"/amplitude", "", 0.707, "", 0.0, 1.0};
-  Parameter panPosition{"/pan", "", 0.5, "", 0.0, 1.0};
-  Parameter playbackRate{"/playback", "", 0.0, "", -1.0, 1.0};
+  Parameter panPosition{"/pan", "", 0, "", -1., 1.};
+  Parameter playbackRate{"/playback", "", 0.0, "", -1.5, 1};
   Parameter birthRate{"/frequency", "", 20, "", 0, 1000};
 
   // this oscillator governs the rate at which grains are created
@@ -179,8 +179,9 @@ struct Granulator {
     
     // Android match
     startPosition = (ao.z +180 ) / 360;// 0~1
-    cout << startPosition << endl;
-    playbackRate = cell_grv.x;
+    // cout << startPosition << endl;
+    playbackRate = cell_grv.x * 1.5;
+    // cout << playbackRate << endl;
     peakPosition = (ao.z +180 ) / 360;
     amplitudePeak = acc_abs * 2;
 
@@ -206,8 +207,8 @@ struct Granulator {
   diy::FloatPair operator()() {
     // figure out if we should generate (reincarnate) more grains; then do so.
     //
-    // birthRate = 10 + 0.1*tan(acc_abs);
-   birthRate = 10 + 0.1*tan(acc_abs) + 10 * (cell_rot.x+1.5);
+    birthRate = 10 + tan(acc_abs);
+  //  birthRate = 10 + 10*(-cell_grv.y+1);
    grainBirth.frequency(birthRate);
     //  cout << "    "  << birthRate << endl;
     if (grainBirth()) {
