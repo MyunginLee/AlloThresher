@@ -265,26 +265,27 @@ struct MyApp : DistributedAppWithState<CommonState>
     }
 
     // load sound files into the
-    granulator.load("source/0_dub.wav");
+    // granulator.load("source/0_dub.wav");
     // granulator.load("source/1_oingd.wav");
-    granulator.load("source/1_laugh.wav");
+    granulator.load("source/0_laugh.wav");
     // granulator.load("source/2_nidea.wav");
-    granulator.load("source/2_dontcare.wav");
+    // granulator.load("source/2_dontcare.wav");
+    granulator.load("source/1_beatbox.wav");
+    granulator.load("source/2_oingd.wav");
     granulator.load("source/3_sponge.wav");
     granulator.load("source/4_click.wav");
-    granulator.load("source/5_jazz.wav");
-    granulator.load("source/6_beatbox.wav");
-    granulator.load("source/7_oingd.wav");
+    // granulator.load("source/5_jazz.wav");
     // granulator.load("source/7_pew.wav");
-    granulator.load("source/8_harpsi.wav");
-    granulator.load("source/9_violin.wav");
-    granulator.load("source/10_lux.wav");
-    granulator.load("source/11_emile.wav");
-    granulator.load("source/12_mong.wav");
-    granulator.load("source/13_atz.wav");
+    granulator.load("source/5_sc.wav");
+    // granulator.load("source/5_harpsi.wav");
+    granulator.load("source/6_violin.wav");
+    granulator.load("source/7_lux.wav");
+    granulator.load("source/8_emile.wav");
+    granulator.load("source/9_mong.wav");
+    granulator.load("source/10_atz.wav");
     // granulator.load("source/11_drugs.wav");
-    granulator.load("source/14_kor.wav");
-    granulator.load("source/15_sanjo.wav");
+    // granulator.load("source/12_kor.wav");
+    // granulator.load("source/15_sanjo.wav");
     // granulator.load("source/16_jazz.wav");
     // granulator.load("source/17_jazz.wav");
     gui.init();
@@ -332,7 +333,7 @@ struct MyApp : DistributedAppWithState<CommonState>
 
     // granular source command is determined by the android angle,, **
     // cout << ao.x << " " <<     int( (ao.x+180) / 36)<< endl; 
-    gest_command = int( (ao.x+180) / 23);
+    gest_command = int( (ao.x+180) / 33);
     // cout << gest_command;
     // Power of acceleration.
     acc_abs = cbrt(cell_acc.x * cell_acc.x + cell_acc.y * cell_acc.y + cell_acc.z * cell_acc.z) * 0.1;

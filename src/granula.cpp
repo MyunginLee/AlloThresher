@@ -148,7 +148,7 @@ struct Granulator {
 
   // gui tweakable parameters
   //
-  ParameterInt whichClip{"/clip", "", 0, "", 0, 17};
+  ParameterInt whichClip{"/clip", "", 0, "", 0, 10};
   Parameter grainDuration{"/duration", "", 0.25, "", 0.001, 2.0};
   Parameter startPosition{"/position", "", 0.25, "", 0.0, 1.0};
   Parameter peakPosition{"/envelope", "", 0.1, "", 0.0, 1.0};
@@ -180,7 +180,7 @@ struct Granulator {
     // Android match
     startPosition = (ao.z +180 ) / 360;// 0~1
     // cout << startPosition << endl;
-    playbackRate = cell_grv.x * 1.5;
+    playbackRate = cell_grv.y * 1.;
     // cout << playbackRate << endl;
     peakPosition = (ao.z +180 ) / 360;
     amplitudePeak = acc_abs * 2;
@@ -207,7 +207,7 @@ struct Granulator {
   diy::FloatPair operator()() {
     // figure out if we should generate (reincarnate) more grains; then do so.
     //
-    birthRate = 10 + tan(acc_abs);
+    birthRate = 10 + 0.1 * tan(acc_abs);
   //  birthRate = 10 + 10*(-cell_grv.y+1);
    grainBirth.frequency(birthRate);
     //  cout << "    "  << birthRate << endl;
