@@ -170,7 +170,7 @@ struct Granulator {
 
     // // map gestural data to input
     // grainDuration = acc_abs * 0.5; 
-    grainDuration = acc_abs * 2.; 
+    grainDuration = acc_abs * 4.; 
     // TODO . match with android ao
     // startPosition = (cell_grv.y+1)/2;
     // playbackRate = cell_grv.x;

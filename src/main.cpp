@@ -514,6 +514,16 @@ struct MyApp : DistributedAppWithState<CommonState>
         mPan(rv_l2, rv_l2, rv_r2);
         io.out(0) = (rv_r2);
         io.out(1) = (rv_l2);
+        io.out(2) = (rv_r2);
+        io.out(3) = (rv_l2);
+        io.out(4) = (rv_r2);
+        io.out(5) = (rv_l2);
+        io.out(6) = (rv_r2);
+        io.out(7) = (rv_l2);
+        io.out(8) = (rv_r2);
+        io.out(9) = (rv_l2);
+        io.out(10) = (rv_l2);
+        io.out(11) = (rv_r2);
 
         if (stft(rv_r2))
         { // Loop through all the frequency bins
@@ -618,6 +628,6 @@ struct MyApp : DistributedAppWithState<CommonState>
 int main()
 {
   MyApp app;
-  app.configureAudio(SAMPLE_RATE, BLOCK_SIZE, OUTPUT_CHANNELS);
+  app.configureAudio(SAMPLE_RATE, BLOCK_SIZE, 12);
   app.start();
 }
