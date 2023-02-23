@@ -136,6 +136,7 @@ struct MyApp : DistributedAppWithState<CommonState>
   PresetServer presetServer{"0.0.0.0", 9011};
   ParameterInt active{"/active", "", 0, "", 0, 1000};
   Parameter value{"/value", "", 0, "", -1, 1};
+  Parameter gain{"/Gain", "", 1, "", 0, 16};
   osc::Recv server;
   Mesh mSpectrogram;
   vector<float> spectrum;
@@ -282,7 +283,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     granulator.load("source/7_lux.wav");
     granulator.load("source/8_emile.wav");
     granulator.load("source/9_mong.wav");
-    granulator.load("source/10_atz.wav");
+    granulator.load("source/10_scherzo.wav");
     // granulator.load("source/11_drugs.wav");
     // granulator.load("source/12_kor.wav");
     // granulator.load("source/15_sanjo.wav");
@@ -300,7 +301,7 @@ struct MyApp : DistributedAppWithState<CommonState>
         << granulator.whichClip << granulator.grainDuration
         << granulator.startPosition << granulator.peakPosition
         << granulator.amplitudePeak << granulator.panPosition
-        << granulator.playbackRate << granulator.birthRate << active;
+        << granulator.playbackRate << granulator.birthRate << active << gain;
 
     presetHandler << granulator.whichClip << granulator.grainDuration
                   << granulator.startPosition << granulator.peakPosition
@@ -504,7 +505,7 @@ struct MyApp : DistributedAppWithState<CommonState>
         // reverb(fl , rv_r1, rv_l1);
         rv_r1 = fr;
         rv_l1 = fl;
-        reverb(fr , rv_r2, rv_l2);
+        reverb(fr*gain , rv_r2, rv_l2);
         // fl = rv_r1 + rv_r2;
         // fr = rv_l1 + rv_l2;
         // io.out(0) = (fl);

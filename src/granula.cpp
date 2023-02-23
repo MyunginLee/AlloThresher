@@ -181,6 +181,7 @@ struct Granulator {
     startPosition = (ao.z +180 ) / 360;// 0~1
     // cout << startPosition << endl;
     playbackRate = cell_grv.y * 1.;
+    // playbackRate = 1;
     // cout << playbackRate << endl;
     peakPosition = (ao.z +180 ) / 360;
     amplitudePeak = acc_abs * 2;
