@@ -276,7 +276,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     granulator.load("source/4_click.wav");
     // granulator.load("source/5_jazz.wav");
     // granulator.load("source/7_pew.wav");
-    granulator.load("source/5_sc.wav");
+    granulator.load("source/5_crunch.wav");
     // granulator.load("source/5_harpsi.wav");
     granulator.load("source/6_violin.wav");
     granulator.load("source/7_lux.wav");

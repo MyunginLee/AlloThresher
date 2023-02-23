@@ -149,7 +149,7 @@ struct Granulator {
   // gui tweakable parameters
   //
   ParameterInt whichClip{"/clip", "", 0, "", 0, 10};
-  Parameter grainDuration{"/duration", "", 0.25, "", 0.001, 2.0};
+  Parameter grainDuration{"/duration", "", 0.25, "", 0.001, 3.0};
   Parameter startPosition{"/position", "", 0.25, "", 0.0, 1.0};
   Parameter peakPosition{"/envelope", "", 0.1, "", 0.0, 1.0};
   Parameter amplitudePeak{"/amplitude", "", 0.707, "", 0.0, 1.0};
@@ -170,7 +170,7 @@ struct Granulator {
 
     // // map gestural data to input
     // grainDuration = acc_abs * 0.5; 
-    grainDuration = acc_abs * 4.; 
+    grainDuration = acc_abs * 2.; 
     // TODO . match with android ao
     // startPosition = (cell_grv.y+1)/2;
     // playbackRate = cell_grv.x;
