@@ -172,6 +172,8 @@ struct MyApp : DistributedAppWithState<CommonState>
   Reverb<float> reverb;
   int fbh, fbw;
   float fb_idx; // frame blur width, height
+  float bnf_memory;
+  int frame_feedback_withdraw = 0;
   void PlatformSetupSize()
   {
     int total_width, total_height;
@@ -284,7 +286,8 @@ struct MyApp : DistributedAppWithState<CommonState>
     granulator.load("source/7_lux.wav");
     granulator.load("source/8_emile.wav");
     granulator.load("source/9_mong.wav");
-    granulator.load("source/10_scherzo.wav");
+    // granulator.load("source/10_scherzo.wav");
+    granulator.load("source/10_passby.wav");
     // granulator.load("source/11_drugs.wav");
     // granulator.load("source/12_kor.wav");
     // granulator.load("source/15_sanjo.wav");
@@ -394,14 +397,19 @@ struct MyApp : DistributedAppWithState<CommonState>
     // g.tint(0.88 + 0.05 * acc_abs); // proper ?
 
     // g.tint(0.93 + 0.05 * acc_abs); // proper ?
-    g.tint(0.91 + 0.01 * acc_abs); // proper ?
+    g.tint(0.91 + 0.1 * acc_abs); // proper ?
 
 
     // g.quadViewport(texBlur, -1.005, -1.005, 2.01, 2.01); // Outward
     // g.quadViewport(texBlur, -1. - android_acc_abs*0.1, -1.- android_acc_abs*0.1
     //               , 2 + android_acc_abs*0.2, 2 + android_acc_abs*0.2); // Outward. good straight!
     float direction = -ao.y / 9000;
-    float bnf = aa.magSqr() * direction + 0.1f+0.8*(ao.y+180)/100;
+    // v1 **
+    // float bnf = aa.magSqr() * direction + 0.1f+0.8*(ao.y+180)/100;
+    // v2
+    float bnf = 0.1f+ (-ao.y)/90 + -0.8*cell_grv.y;
+
+    // float bnf = -0.8*cell_grv.y;
 
     lens().near(0.1).far(1000).fovy(90+ 10 * bnf); // lens view angle, how far
     // cout << bnf << endl;
@@ -431,7 +439,7 @@ struct MyApp : DistributedAppWithState<CommonState>
 
     g.scale(acc_abs * 10 + 1);
     g.shader(shader);
-    g.shader().uniform("halfSize", 0.05);
+    g.shader().uniform("halfSize", 0.05+acc_abs);
     // g.draw(pointMesh);
     g.popMatrix();
     // shade_texture.unbind();
@@ -442,29 +450,58 @@ struct MyApp : DistributedAppWithState<CommonState>
     // g.color(HSV(acc_abs * (gest_command)*0.2 + 0.1* (gest_command) + 0.1 * al::rnd::uniform(acc_abs),0.7+ al::rnd::uniform(acc_abs),0.9+0.1*al::rnd::uniform(acc_abs)));
 // vivid!
     // g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), android_acc_abs + al::rnd::uniform(acc_abs), 0.7 + 1 * al::rnd::uniform(acc_abs))); 
-    g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), android_acc_abs + al::rnd::uniform(acc_abs), 0.2+android_acc_abs + 1 * al::rnd::uniform(acc_abs)));
+    // v1 202302
+    // g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), android_acc_abs + al::rnd::uniform(acc_abs), 0.2+android_acc_abs + 1 * al::rnd::uniform(acc_abs)));
+    // v2 202303 more vivid wo rnd?
+    g.color(HSV(0.1 * (gest_command) + 0.1 * al::rnd::uniform(acc_abs), android_acc_abs + 0.1 + al::rnd::uniform(acc_abs), 0.2+android_acc_abs + 0.5));
 
     // g.rotate(90, Vec3f(0, 0, 1));
     // g.rotate(cell_acc.x * 100, Vec3f(rot.x, 0, 0));
     // g.rotate(cell_acc.y * 100, Vec3f(0, rot.y, 0));
     // g.rotate(cell_acc.z * 100, mFilter3f(cell_grv.x, 0, 0));
-    g.rotate(cell_acc.y * 100, Vec3f(0, cell_grv.y, 0));
-    g.rotate(cell_acc.z * 100, Vec3f(0, 0, cell_grv.z));
-    g.scale(0.1, 10, 1);
+
+    // v1 rotattion 2023
+    // g.rotate(cell_acc.y * 100, Vec3f(0, cell_grv.y, 0));
+    // g.rotate(cell_acc.z * 100, Vec3f(0, 0, cell_grv.z));
+    // v2 rotation trial 2023
+    g.rotate(90, Vec3f(0, 0, -1));
+    g.rotate(cell_rot.z / M_PI * 180, Vec3f(0, 0, -1));
+    // cout << cell_rot.y / M_PI * 180 << endl;
+    // g.rotate(cell_rot.y / M_PI * 180, Vec3f(0, -1, 0));
+    // g.rotate(cell_rot.x / M_PI * 180, Vec3f(1, 0, 0));
+    // g.scale(0.001, 10, 1);
     g.pointSize(acc_abs * 8);
     for (int i = 0; i < FFT_SIZE / 2; i++)
     {
-      mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs * 100), al::rnd::uniformS(acc_abs)+ spectrum[i] * 1000, 1 + spectrum[i] * 100 + 0.5 * al::rnd::uniformS(acc_abs)));
+      mSpectrogram.color(HSV(0.5 - spectrum[i] * 100 + al::rnd::uniformS(acc_abs * 1000), al::rnd::uniformS(acc_abs)+ spectrum[i] * 1000, 1 + spectrum[i] * 100 + 0.5 * al::rnd::uniformS(acc_abs)));
       // mSpectrogram.vertex(cos(i) *(1 + 10 * cos(spectrum[i])), sin(i) * (1+ 10 * sin(spectrum[i])), 0.0);
       // mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
       // , 10*sin(0.01*i+cell_acc.z * 100)*cos(0.1*i*android_acc_abs)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) );
-      mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
-      , 10*sin(0.01*i+cell_acc.z * 100)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) *100* spectrum[i]);    }
+
+      // round vertex. 2023.02
+      // mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
+      // , 10*sin(0.01*i+cell_acc.z * 100)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) *100* spectrum[i]);    
+      // straight spectrum vertex. 2023.03
+      // mSpectrogram.vertex( i, 100* spectrum[i], 0);
+      mSpectrogram.vertex( cos( 0.0031 * i )* (100000* spectrum[i]+0.01)
+      , sin(0.0031*i )*(100000*spectrum[i]+0.01), 0);    
+
+    }
+
     // cout << android_acc_abs << endl;
     g.draw(mSpectrogram);
     g.popMatrix();
-    texBlur.copyFrameBuffer();
-
+    // this prevents/reduces the frame feedback artifacts while bnf changes the sign.
+    if (bnf_memory * bnf > 0 && frame_feedback_withdraw == 0){
+      texBlur.copyFrameBuffer();  
+      frame_feedback_withdraw == 0;
+    } else if (frame_feedback_withdraw == 0){
+      frame_feedback_withdraw = 10;
+    } else{
+      frame_feedback_withdraw--;
+      // cout << frame_feedback_withdraw << endl;
+    }
+    bnf_memory = bnf;
     if(showGUI)
       gui.draw(g);
   }
@@ -506,7 +543,7 @@ struct MyApp : DistributedAppWithState<CommonState>
         // reverb(fl , rv_r1, rv_l1);
         rv_r1 = fr;
         rv_l1 = fl;
-        reverb(fr*gain , rv_r2, rv_l2);
+        reverb(fr , rv_r2, rv_l2);
         // fl = rv_r1 + rv_r2;
         // fr = rv_l1 + rv_l2;
         // io.out(0) = (fl);
@@ -514,6 +551,8 @@ struct MyApp : DistributedAppWithState<CommonState>
         // cout << rv_l1<< endl;
         mPan.pos(-granulator.panPosition);
         mPan(rv_l2, rv_l2, rv_r2);
+        rv_r2 = rv_r2*gain;
+        rv_l2 = rv_l2*gain;
         io.out(0) = (rv_r2);
         io.out(1) = (rv_l2);
         io.out(2) = (rv_r2);

@@ -154,7 +154,7 @@ struct Granulator {
   Parameter peakPosition{"/envelope", "", 0.1, "", 0.0, 1.0};
   Parameter amplitudePeak{"/amplitude", "", 0.707, "", 0.0, 1.0};
   Parameter panPosition{"/pan", "", 0, "", -1., 1.};
-  Parameter playbackRate{"/playback", "", 0.0, "", -1.5, 1};
+  Parameter playbackRate{"/playback", "", 0.0, "", -1.5, 1.3};
   Parameter birthRate{"/frequency", "", 20, "", 0, 1000};
 
   // this oscillator governs the rate at which grains are created
@@ -178,12 +178,17 @@ struct Granulator {
     // amplitudePeak = acc_abs * 2;
     
     // Android match
-    startPosition = (ao.z +180 ) / 360;// 0~1
+    // startPosition = (ao.z +180 ) / 360;// 0~1
+    float angle_pos = (ao.x+180)/ 33;
+    startPosition = angle_pos - int(angle_pos) ;// 0~1
     // cout << startPosition << endl;
-    playbackRate = cell_grv.y * 1.;
+    // playbackRate = -cell_grv.y * 1.;
+    playbackRate = -1.3*cell_grv.y;
     // playbackRate = 1;
     // cout << playbackRate << endl;
-    peakPosition = (ao.z +180 ) / 360;
+    // peakPosition = (ao.z +180 ) / 360;
+    peakPosition = 1;
+
     amplitudePeak = acc_abs * 2;
 
     // cout << grainDuration << startPosition << playbackRate << endl;
