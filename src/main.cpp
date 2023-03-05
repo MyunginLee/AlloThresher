@@ -134,9 +134,9 @@ struct MyApp : DistributedAppWithState<CommonState>
   ControlGUI gui;
   PresetHandler presetHandler{"GranulatorPresets"};
   PresetServer presetServer{"0.0.0.0", 9011};
-  ParameterInt active{"/active", "", 0, "", 0, 1000};
+  ParameterInt active{"Active Grains", "", 0, "", 0, 1000};
   Parameter value{"/value", "", 0, "", -1, 1};
-  Parameter gain{"/Gain", "", 1, "", 0, 16};
+  Parameter gain{"Gain", "", 1, "", 0, 16};
   osc::Recv server;
   Mesh mSpectrogram;
   vector<float> spectrum;
@@ -303,22 +303,21 @@ struct MyApp : DistributedAppWithState<CommonState>
             */
     gui << presetHandler //
         << granulator.whichClip << granulator.grainDuration
-        << granulator.startPosition << granulator.peakPosition
-        << granulator.amplitudePeak << granulator.panPosition
+        << granulator.startPosition << granulator.panPosition
         << granulator.playbackRate << granulator.birthRate << active << gain;
 
-    presetHandler << granulator.whichClip << granulator.grainDuration
-                  << granulator.startPosition << granulator.peakPosition
-                  << granulator.amplitudePeak << granulator.panPosition
-                  << granulator.playbackRate << granulator.birthRate;
-    presetHandler.setMorphTime(1.0);
+    // presetHandler << granulator.whichClip << granulator.grainDuration
+    //               << granulator.startPosition << granulator.peakPosition
+    //               << granulator.amplitudePeak << granulator.panPosition
+    //               << granulator.playbackRate << granulator.birthRate;
+    // presetHandler.setMorphTime(1.0);
     // presetServer << presetHandler;
 
-    parameterServer() << granulator.whichClip << granulator.grainDuration
-                      << granulator.startPosition << granulator.peakPosition
-                      << granulator.amplitudePeak << granulator.panPosition
-                      << granulator.playbackRate << granulator.birthRate;
-    parameterServer().print();
+    // parameterServer() << granulator.whichClip << granulator.grainDuration
+    //                   << granulator.startPosition << granulator.peakPosition
+    //                   << granulator.amplitudePeak << granulator.panPosition
+    //                   << granulator.playbackRate << granulator.birthRate;
+    // parameterServer().print();
     // // OSC comm
     server.open(4444, "0.0.0.0", 0.05);
     server.handler(oscDomain()->handler());
@@ -531,7 +530,7 @@ struct MyApp : DistributedAppWithState<CommonState>
           printf("p.right is %s\n", show_classification(p.right));
         }
 
-        value.set(p.left);
+        // value.set(p.left);
 
         // float fl = mFilter(p.left);
         // float fr = mFilter(p.right);
