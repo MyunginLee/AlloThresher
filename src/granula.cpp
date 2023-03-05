@@ -202,7 +202,7 @@ struct Granulator {
 
     g.pan = panPosition;
   }
-
+ 
   // make the next sample
   //
   diy::FloatPair operator()() {
