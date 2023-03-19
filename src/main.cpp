@@ -270,7 +270,8 @@ struct MyApp : DistributedAppWithState<CommonState>
     // load sound files into the
     // granulator.load("source/0_dub.wav");
     // granulator.load("source/1_oingd.wav");
-    granulator.load("source/0_laugh.wav");
+    // granulator.load("source/0_laugh.wav");
+    granulator.load("source/0_wave.wav");
     // granulator.load("source/2_nidea.wav");
     // granulator.load("source/2_dontcare.wav");
     granulator.load("source/1_beatbox.wav");
