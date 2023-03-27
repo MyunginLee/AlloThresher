@@ -129,6 +129,7 @@ struct MyApp : DistributedAppWithState<CommonState>
   DistributedScene scene;
   vector<AndroidSynth *> andsynth;
   AgentCommonData agentCommon;
+  std::shared_ptr<CuttleboneDomain<CommonState>> cuttleboneDomain;
 
   // AndroidSynth synth;
   ControlGUI gui;
@@ -137,6 +138,7 @@ struct MyApp : DistributedAppWithState<CommonState>
   ParameterInt active{"Active Grains", "", 0, "", 0, 1000};
   Parameter value{"/value", "", 0, "", -1, 1};
   Parameter gain{"Gain", "", 1, "", 0, 16};
+  ParameterInt mode{"Mode", "", 0, "", 0, 3};
   osc::Recv server;
   Mesh mSpectrogram;
   vector<float> spectrum;
@@ -179,13 +181,18 @@ struct MyApp : DistributedAppWithState<CommonState>
     int total_width, total_height;
     al::sphere::getFullscreenDimension(&total_width, &total_height);
     std::cout << total_width << ", " << total_height << std::endl;
-    dimensions(0, 0, total_width, total_height);
+    // dimensions(0, 0, total_width, total_height);
   }
   void onInit() override
   {
     if (al_get_hostname() == "moxi" || fullscreen)
     {
       PlatformSetupSize();
+    }
+    cuttleboneDomain = CuttleboneDomain<CommonState>::enableCuttlebone(this);
+    if (!cuttleboneDomain) {
+      std::cerr << "ERROR: Could not start Cuttlebone" << std::endl;
+      quit();
     }
     registerDynamicScene(scene);
     scene.setDefaultUserData(&this->agentCommon);
@@ -210,9 +217,50 @@ struct MyApp : DistributedAppWithState<CommonState>
 
   void onCreate() override
   {
-    lens().near(0.1).far(100).fovy(90); // lens view angle, how far
-    texBlur.filter(Texture::LINEAR);
+    if (isPrimary()) {
+      lens().near(0.1).far(100).fovy(90); // lens view angle, how far
+      // load sound files into the
+      // granulator.load("source/0_dub.wav");
+      // granulator.load("source/1_oingd.wav");
+      // granulator.load("source/0_laugh.wav");
+      granulator.load("source/0_wave.wav");
+      // granulator.load("source/2_nidea.wav");
+      // granulator.load("source/2_dontcare.wav");
+      granulator.load("source/1_beatbox.wav");
+      // granulator.load("source/2_oingd.wav");
+      granulator.load("source/2_ufo.wav");
+      granulator.load("source/3_sponge.wav");
+      granulator.load("source/4_click.wav");
+      // granulator.load("source/5_jazz.wav");
+      // granulator.load("source/7_pew.wav");
+      granulator.load("source/5_crunch.wav");
+      // granulator.load("source/5_harpsi.wav");
+      granulator.load("source/6_violin.wav");
+      granulator.load("source/7_lux.wav");
+      granulator.load("source/8_emile.wav");
+      granulator.load("source/9_mong.wav");
+      // granulator.load("source/10_scherzo.wav");
+      granulator.load("source/10_passby.wav");
+      // granulator.load("source/11_drugs.wav");
+      // granulator.load("source/12_kor.wav");
+      // granulator.load("source/15_sanjo.wav");
+      // granulator.load("source/16_jazz.wav");
+      // granulator.load("source/17_jazz.wav");
+      gui.init();
+      /*
+      gui.addr(presetHandler,  //
+              granulator.whichClip, granulator.grainDuration,
+              granulator.startPosition, granulator.peakPosition,
+              granulator.amplitudePeak, granulator.panPosition,
+              granulator.playbackRate, granulator.birthRate);
+              */
+      gui << presetHandler //
+          << granulator.whichClip << granulator.grainDuration
+          << granulator.startPosition << granulator.panPosition
+          << granulator.playbackRate << granulator.birthRate << active << gain << mode;
 
+    }
+    texBlur.filter(Texture::LINEAR);
     // Shader
     shade_texture.create2D(256, 256, Texture::R8, Texture::RED, Texture::SHORT);
     int Nx = shade_texture.width();
@@ -266,46 +314,6 @@ struct MyApp : DistributedAppWithState<CommonState>
         granulator.pixel[j * Mx + i] = c;
       }
     }
-
-    // load sound files into the
-    // granulator.load("source/0_dub.wav");
-    // granulator.load("source/1_oingd.wav");
-    // granulator.load("source/0_laugh.wav");
-    granulator.load("source/0_wave.wav");
-    // granulator.load("source/2_nidea.wav");
-    // granulator.load("source/2_dontcare.wav");
-    granulator.load("source/1_beatbox.wav");
-    // granulator.load("source/2_oingd.wav");
-    granulator.load("source/2_ufo.wav");
-    granulator.load("source/3_sponge.wav");
-    granulator.load("source/4_click.wav");
-    // granulator.load("source/5_jazz.wav");
-    // granulator.load("source/7_pew.wav");
-    granulator.load("source/5_crunch.wav");
-    // granulator.load("source/5_harpsi.wav");
-    granulator.load("source/6_violin.wav");
-    granulator.load("source/7_lux.wav");
-    granulator.load("source/8_emile.wav");
-    granulator.load("source/9_mong.wav");
-    // granulator.load("source/10_scherzo.wav");
-    granulator.load("source/10_passby.wav");
-    // granulator.load("source/11_drugs.wav");
-    // granulator.load("source/12_kor.wav");
-    // granulator.load("source/15_sanjo.wav");
-    // granulator.load("source/16_jazz.wav");
-    // granulator.load("source/17_jazz.wav");
-    gui.init();
-    /*
-    gui.addr(presetHandler,  //
-             granulator.whichClip, granulator.grainDuration,
-             granulator.startPosition, granulator.peakPosition,
-             granulator.amplitudePeak, granulator.panPosition,
-             granulator.playbackRate, granulator.birthRate);
-            */
-    gui << presetHandler //
-        << granulator.whichClip << granulator.grainDuration
-        << granulator.startPosition << granulator.panPosition
-        << granulator.playbackRate << granulator.birthRate << active << gain;
 
     // presetHandler << granulator.whichClip << granulator.grainDuration
     //               << granulator.startPosition << granulator.peakPosition
@@ -483,9 +491,18 @@ struct MyApp : DistributedAppWithState<CommonState>
       // , 10*sin(0.01*i+cell_acc.z * 100)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) *100* spectrum[i]);    
       // straight spectrum vertex. 2023.03
       // mSpectrogram.vertex( i, 100* spectrum[i], 0);
-      mSpectrogram.vertex( cos( 0.0031 * i )* (100000* spectrum[i]+0.01)
-      , sin(0.0031*i )*(100000*spectrum[i]+0.01), 0);    
-
+      if(mode==0){
+        mSpectrogram.vertex( cos( 0.0031 * i )* (100000* spectrum[i]+0.01)
+        , sin(0.0031*i )*(100000*spectrum[i]+0.01), 0);    
+      } else if (mode ==1){
+        mSpectrogram.vertex( log(0.01*i), exp2(1000*spectrum[i]), 0);       
+      } else if (mode ==2){
+        mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
+       , 10*sin(0.01*i+cell_acc.z * 100)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) *100* spectrum[i]);
+      } else{
+        mSpectrogram.vertex( 10*cos( 0.01 * i )*sin( 0.1 * i*android_acc_abs + cell_acc.y * 100) 
+       , 10*sin(0.01*i+cell_acc.z * 100)*cos(0.1*i*android_acc_abs)*(100* spectrum[i] * (1 + android_acc_abs)), cos( 0.01 * i ) );
+      }
     }
 
     // cout << android_acc_abs << endl;
@@ -669,6 +686,6 @@ struct MyApp : DistributedAppWithState<CommonState>
 int main()
 {
   MyApp app;
-  app.configureAudio(SAMPLE_RATE, BLOCK_SIZE, 12);
+  // app.configureAudio(SAMPLE_RATE, BLOCK_SIZE, 12);
   app.start();
 }
