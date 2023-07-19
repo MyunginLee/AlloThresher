@@ -1,8 +1,8 @@
 #ifndef __whak
 #define __whak
 
-// #include "al/app/al_App.hpp"
-#include "al/app/al_DistributedApp.hpp"
+#include "al/app/al_App.hpp"
+// #include "al/app/al_DistributedApp.hpp"
 #include "al_ext/statedistribution/al_CuttleboneDomain.hpp"
 #include "al/ui/al_ControlGUI.hpp"
 #include "al/ui/al_Parameter.hpp"

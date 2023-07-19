@@ -8,128 +8,128 @@ static bool fullscreen = true;
 
 using namespace std;
 #define FFT_SIZE 4048
-struct CommonState
-{
+// struct CommonState
+// {
 
-};
-struct AgentCommonData
-{
+// };
+// struct AgentCommonData
+// {
 
-};
-struct AndroidSynth : public PositionedVoice
-{
-    // Unit generators
-    float mNoiseMix;
-    gam::Pan<> mPan;
-    gam::ADSR<> mAmpEnv;
-    gam::EnvFollow<> mEnvFollow; // envelope follower to connect audio output to graphics
-    gam::DSF<> mOsc;
-    gam::NoiseWhite<> mNoise;
-    gam::Reson<> mRes;
-    gam::Env<2> mCFEnv;
-    gam::Env<2> mBWEnv;
-    Reverb<float> reverb;
-    float amp, freq, att, rels, sus, noise, cf1,cf2, cfrise, bw1, bw2, bwrise,
-          hmnum, hmamp, rev;
-    gam::STFT stft = gam::STFT(FFT_SIZE, FFT_SIZE / 4, 0, gam::HANN, gam::MAG_FREQ);
-    Mesh mSpectrogram;
-    vector<float> spectrum;
-    AgentCommonData *commonData;
+// };
+// struct AndroidSynth : public PositionedVoice
+// {
+//     // Unit generators
+//     float mNoiseMix;
+//     gam::Pan<> mPan;
+//     gam::ADSR<> mAmpEnv;
+//     gam::EnvFollow<> mEnvFollow; // envelope follower to connect audio output to graphics
+//     gam::DSF<> mOsc;
+//     gam::NoiseWhite<> mNoise;
+//     gam::Reson<> mRes;
+//     gam::Env<2> mCFEnv;
+//     gam::Env<2> mBWEnv;
+//     Reverb<float> reverb;
+//     float amp, freq, att, rels, sus, noise, cf1,cf2, cfrise, bw1, bw2, bwrise,
+//           hmnum, hmamp, rev;
+//     gam::STFT stft = gam::STFT(FFT_SIZE, FFT_SIZE / 4, 0, gam::HANN, gam::MAG_FREQ);
+//     Mesh mSpectrogram;
+//     vector<float> spectrum;
+//     AgentCommonData *commonData;
 
-  void init() override
-  {
-    commonData = static_cast<AgentCommonData *>(userData());
-    mAmpEnv.curve(0);               // linear segments
-    mAmpEnv.levels(0, 1.0, 1.0, 0); // These tables are not normalized, so scale to 0.3
-    mAmpEnv.sustainPoint(2);        // Make point 2 sustain until a release is issued
-    mCFEnv.curve(0);
-    mBWEnv.curve(0);
-    mOsc.harmonics(12);
-    amp = 0;
-    freq = 1000;
-    att = 0.1;
-    rels = 3.;
-    sus = 0.8;
-    noise = 0.8;
-    cf1 = 400;
-    cf2 = 400;
-    cfrise = 0.5;
-    bw1 = 700;
-    bw2 = 900;
-    bwrise = 0.5;
-    hmnum = 12;
-    hmamp = 1;
-    rev = 0.7;
-// amp, freq, att, rels, sus, curv, noise, cf1,cf2, cfrise, bw1, bw2, bwrise,
-//           hmnum, hmamp, reverb;
-  }
-  void update(double dt) override
-  {
-    noise = 0.8;
-  }
-  void onProcess(Graphics &g) override
-  {
-    mSpectrogram.reset();
-    mSpectrogram.primitive(Mesh::POINTS);
-    for (int i = 0; i < FFT_SIZE / 2; i++)
-    {
-      mSpectrogram.color(HSV(0.5 - spectrum[i] * 100,100,100));
-      mSpectrogram.vertex(i, spectrum[i], 0.0);
-    }
-    g.meshColor(); // Use the color in the mesh
-    g.pushMatrix();
-    g.pointSize(10);
-    g.translate(0, 0, 0);
-    g.scale(10.0 / FFT_SIZE, 1000, 1.0);
-    g.draw(mSpectrogram);
-    g.popMatrix();
+//   void init() override
+//   {
+//     commonData = static_cast<AgentCommonData *>(userData());
+//     mAmpEnv.curve(0);               // linear segments
+//     mAmpEnv.levels(0, 1.0, 1.0, 0); // These tables are not normalized, so scale to 0.3
+//     mAmpEnv.sustainPoint(2);        // Make point 2 sustain until a release is issued
+//     mCFEnv.curve(0);
+//     mBWEnv.curve(0);
+//     mOsc.harmonics(12);
+//     amp = 0;
+//     freq = 1000;
+//     att = 0.1;
+//     rels = 3.;
+//     sus = 0.8;
+//     noise = 0.8;
+//     cf1 = 400;
+//     cf2 = 400;
+//     cfrise = 0.5;
+//     bw1 = 700;
+//     bw2 = 900;
+//     bwrise = 0.5;
+//     hmnum = 12;
+//     hmamp = 1;
+//     rev = 0.7;
+// // amp, freq, att, rels, sus, curv, noise, cf1,cf2, cfrise, bw1, bw2, bwrise,
+// //           hmnum, hmamp, reverb;
+//   }
+//   void update(double dt) override
+//   {
+//     noise = 0.8;
+//   }
+//   void onProcess(Graphics &g) override
+//   {
+//     mSpectrogram.reset();
+//     mSpectrogram.primitive(Mesh::POINTS);
+//     for (int i = 0; i < FFT_SIZE / 2; i++)
+//     {
+//       mSpectrogram.color(HSV(0.5 - spectrum[i] * 100,100,100));
+//       mSpectrogram.vertex(i, spectrum[i], 0.0);
+//     }
+//     g.meshColor(); // Use the color in the mesh
+//     g.pushMatrix();
+//     g.pointSize(10);
+//     g.translate(0, 0, 0);
+//     g.scale(10.0 / FFT_SIZE, 1000, 1.0);
+//     g.draw(mSpectrogram);
+//     g.popMatrix();
 
-  }
-void onProcess(AudioIOData &io) override
-  {
-    while (io())
-    {
-        // // mix oscillator with noise
-        // float s1 = mOsc() * (1 - noise) + mNoise() * noise;
+//   }
+// void onProcess(AudioIOData &io) override
+//   {
+//     while (io())
+//     {
+//         // // mix oscillator with noise
+//         // float s1 = mOsc() * (1 - noise) + mNoise() * noise;
 
-        // // apply resonant filter
-        // mRes.set(mCFEnv(), mBWEnv());
-        // s1 = mRes(s1);
-        // s1 = mOsc();
+//         // // apply resonant filter
+//         // mRes.set(mCFEnv(), mBWEnv());
+//         // s1 = mRes(s1);
+//         // s1 = mOsc();
 
-        // // appy amplitude envelope
-        // // s1 *= mAmpEnv() * amp;
-        // float wet1, wet2;
-        // reverb(s1, wet1, wet2);
+//         // // appy amplitude envelope
+//         // // s1 *= mAmpEnv() * amp;
+//         // float wet1, wet2;
+//         // reverb(s1, wet1, wet2);
 
-        // mEnvFollow(wet1);
-        // mPan(wet1, wet1, wet2);
-			  // if(stft(wet1)){
-        //   for (unsigned k = 0; k < stft.numBins(); ++k)
-        //   {
-        //       // Here we simply scale the complex sample
-        //       spectrum[k] = tanh(pow(stft.bin(k).real(), 1.3));
-        //   }
+//         // mEnvFollow(wet1);
+//         // mPan(wet1, wet1, wet2);
+// 			  // if(stft(wet1)){
+//         //   for (unsigned k = 0; k < stft.numBins(); ++k)
+//         //   {
+//         //       // Here we simply scale the complex sample
+//         //       spectrum[k] = tanh(pow(stft.bin(k).real(), 1.3));
+//         //   }
 
-        //   io.out(0) += wet1;
-        //   io.out(1) += wet2;
-        // }
-    }
-  }
-  void onTriggerOn() override
-  {    
-    cout << "triggered on" << endl;
-  }
-};
+//         //   io.out(0) += wet1;
+//         //   io.out(1) += wet2;
+//         // }
+//     }
+//   }
+//   void onTriggerOn() override
+//   {    
+//     cout << "triggered on" << endl;
+//   }
+// };
 
-struct MyApp : DistributedAppWithState<CommonState>
+struct MyApp : App
 {
   float background = 0.;
   Granulator granulator;
-  DistributedScene scene;
-  vector<AndroidSynth *> andsynth;
-  AgentCommonData agentCommon;
-  std::shared_ptr<CuttleboneDomain<CommonState>> cuttleboneDomain;
+  // DistributedScene scene;
+  // vector<AndroidSynth *> andsynth;
+  // AgentCommonData agentCommon;
+  // std::shared_ptr<CuttleboneDomain<CommonState>> cuttleboneDomain;
 
   // AndroidSynth synth;
   ControlGUI gui;
@@ -185,23 +185,24 @@ struct MyApp : DistributedAppWithState<CommonState>
   }
   void onInit() override
   {
+    audioIO().print();
     if (al_get_hostname() == "moxi" || fullscreen)
     {
       PlatformSetupSize();
     }
-    cuttleboneDomain = CuttleboneDomain<CommonState>::enableCuttlebone(this);
-    if (!cuttleboneDomain) {
-      std::cerr << "ERROR: Could not start Cuttlebone" << std::endl;
-      quit();
-    }
-    registerDynamicScene(scene);
-    scene.setDefaultUserData(&this->agentCommon);
-    scene.registerSynthClass<AndroidSynth>("androidsynth");
+    // cuttleboneDomain = CuttleboneDomain<CommonState>::enableCuttlebone(this);
+    // if (!cuttleboneDomain) {
+    //   std::cerr << "ERROR: Could not start Cuttlebone" << std::endl;
+    //   quit();
+    // }
+    // registerDynamicScene(scene);
+    // scene.setDefaultUserData(&this->agentCommon);
+    // scene.registerSynthClass<AndroidSynth>("androidsynth");
 
 
-    auto newAndroid = scene.allocateVoice<AndroidSynth>();
-    andsynth.push_back(newAndroid);
-    scene.al::PolySynth::triggerOn(newAndroid,0,100);
+    // auto newAndroid = scene.allocateVoice<AndroidSynth>();
+    // andsynth.push_back(newAndroid);
+    // scene.al::PolySynth::triggerOn(newAndroid,0,100);
     spectrum.resize(FFT_SIZE / 2 + 1);
     mFilter.zero();
     reverb.bandwidth(0.6f); // Low-pass amount on input, in [0,1]
@@ -217,7 +218,8 @@ struct MyApp : DistributedAppWithState<CommonState>
 
   void onCreate() override
   {
-    if (isPrimary()) {
+    // if (isPrimary()) {
+    {
       lens().near(0.1).far(100).fovy(90); // lens view angle, how far
       // load sound files into the
       // granulator.load("source/0_dub.wav");
@@ -374,7 +376,7 @@ struct MyApp : DistributedAppWithState<CommonState>
     reverb.decay(0.1*acc_abs+(-ao.y)/90);     // Tail decay factor, in [0,1]
     // cout << ao.x << "  " << ao.y << "  "  << ao.z << endl;
     // reverb.damping(0.1f+0.8*(ao.y+180)/360);   // High-frequency damping, in [0,1]
-    scene.update(dt);
+    // scene.update(dt);
 
     // Diffusion amounts
     // Values near 0.7 are recommended. Moving further away from 0.7 will lead
@@ -686,6 +688,9 @@ struct MyApp : DistributedAppWithState<CommonState>
 int main()
 {
   MyApp app;
-  // app.configureAudio(SAMPLE_RATE, BLOCK_SIZE, 12);
+  // app.configureAudio(48000., 2048, 2, 0);
+
   app.start();
+  return 0;
+
 }
