@@ -170,26 +170,26 @@ struct MyApp : App
   Vec3f imag, amag;
   Vec3f aa, ao;
   float imag_power, amag_power, cross_angle_mean_square;
-  gam::Biquad<> mFilter{};
+  // gam::Biquad<> mFilter{};
   Reverb<float> reverb;
   int fbh, fbw;
   float fb_idx; // frame blur width, height
   float bnf_memory;
   int frame_feedback_withdraw = 0;
-  void PlatformSetupSize()
-  {
-    int total_width, total_height;
-    al::sphere::getFullscreenDimension(&total_width, &total_height);
-    std::cout << total_width << ", " << total_height << std::endl;
-    // dimensions(0, 0, total_width, total_height);
-  }
+  // void PlatformSetupSize()
+  // {
+  //   int total_width, total_height;
+  //   al::sphere::getFullscreenDimension(&total_width, &total_height);
+  //   std::cout << total_width << ", " << total_height << std::endl;
+  //   // dimensions(0, 0, total_width, total_height);
+  // }
   void onInit() override
   {
     audioIO().print();
-    if (al_get_hostname() == "moxi" || fullscreen)
-    {
-      PlatformSetupSize();
-    }
+    // if (al_get_hostname() == "moxi" || fullscreen)
+    // {
+      // PlatformSetupSize();
+    // }
     // cuttleboneDomain = CuttleboneDomain<CommonState>::enableCuttlebone(this);
     // if (!cuttleboneDomain) {
     //   std::cerr << "ERROR: Could not start Cuttlebone" << std::endl;
@@ -204,7 +204,7 @@ struct MyApp : App
     // andsynth.push_back(newAndroid);
     // scene.al::PolySynth::triggerOn(newAndroid,0,100);
     spectrum.resize(FFT_SIZE / 2 + 1);
-    mFilter.zero();
+    // mFilter.zero();
     reverb.bandwidth(0.6f); // Low-pass amount on input, in [0,1]
     reverb.damping(0.5f);   // High-frequency damping, in [0,1]
     reverb.decay(0.6f);     // Tail decay factor, in [0,1]
@@ -365,11 +365,11 @@ struct MyApp : App
     granulator.gest_command = gest_command;
     granulator.ao = ao;
     // Filter realtime
-    filter_coeff = 100+android_acc_abs * 1000;
-    mFilter.freq(filter_coeff);
-    mFilter.res(filter_coeff); 
-    mFilter.type(LOW_PASS);
-    mFilter.zero();
+    // filter_coeff = 100+android_acc_abs * 1000;
+    // mFilter.freq(filter_coeff);
+    // mFilter.res(filter_coeff); 
+    // mFilter.type(LOW_PASS);
+    // mFilter.zero();
     // reverb realtime
     // reverb.bandwidth(0.9f); // Low-pass amount on input, in [0,1]
     // reverb.damping(android_acc_abs);   // High-frequency damping, in [0,1]
