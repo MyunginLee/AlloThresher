@@ -688,7 +688,9 @@ struct MyApp : App
 int main()
 {
   MyApp app;
-  // app.configureAudio(48000., 2048, 2, 0);
+  // app.configureAudio(48000., 512, 2, 1);
+  app.configureAudio(48000., 256);
+  // AudioDevice::printAll();
 
   app.start();
   return 0;
