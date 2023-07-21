@@ -137,7 +137,7 @@ struct MyApp : App
   PresetServer presetServer{"0.0.0.0", 9011};
   ParameterInt active{"Active Grains", "", 0, "", 0, 1000};
   Parameter value{"/value", "", 0, "", -1, 1};
-  Parameter gain{"Gain", "", 1, "", 0, 16};
+  Parameter gain{"Gain", "", 1, "", 0, 50};
   ParameterInt mode{"Mode", "", 0, "", 0, 3};
   osc::Recv server;
   Mesh mSpectrogram;
@@ -689,7 +689,7 @@ int main()
 {
   MyApp app;
   // app.configureAudio(48000., 512, 2, 1);
-  app.configureAudio(48000., 256);
+  app.configureAudio(48000., 128);
   // AudioDevice::printAll();
 
   app.start();
