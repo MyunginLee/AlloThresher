@@ -689,7 +689,7 @@ int main()
 {
   MyApp app;
   // app.configureAudio(48000., 512, 2, 1);
-  app.configureAudio(48000., 128);
+  app.configureAudio(44100., 128);
   // AudioDevice::printAll();
 
   app.start();
