@@ -392,6 +392,11 @@ struct MyApp : App
     // amag_power = amag.mag();
     // imag_power = imag.mag();
     // cout << amag_power + imag_power<< "= " << amag_power << "   " << imag_power << endl;
+    // Change the graphic mode 
+
+    if(al::rnd::uniform(1.) < 0.05){
+      mode = (int)al::rnd::uniform(3.999);
+    }
   }
 
   void onDraw(Graphics &g) override
@@ -407,6 +412,8 @@ struct MyApp : App
     // g.tint(0.88 + 0.05 * acc_abs); // proper ?
 
     // g.tint(0.93 + 0.05 * acc_abs); // proper ?
+
+    // testing 24 icmc
     g.tint(0.91 + 0.1 * acc_abs); // proper ?
 
 

@@ -205,7 +205,7 @@ struct Granulator {
     float fallTime = grainDuration - riseTime;
     g.envelop.set(riseTime, fallTime, amplitudePeak);
 
-    g.pan = panPosition;
+    g.pan = panPosition * (cell_grv.x);
   }
  
   // make the next sample
@@ -231,8 +231,8 @@ struct Granulator {
     float left = 0, right = 0;
     manager.for_each_active([&](Grain& g) {
       float f = g();
-      left += f * (1 - g.pan)* (acc_abs*5);
-      right += f * g.pan *(acc_abs*5);
+      left += f * (1 - g.pan)* (acc_abs*5); // stereo panning based on the acc 
+      right += f * (1 + g.pan) *(acc_abs*5);
       if (g.index.done()) {
         manager.schedule_for_deactivation(g);
       }

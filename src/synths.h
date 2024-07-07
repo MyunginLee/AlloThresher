@@ -1,8 +1,5 @@
 #pragma once
 
-//#ifndef __240C_SYNTHS__
-//#define __240C_SYNTHS__
-
 // C++ STD library
 #include <chrono>
 #include <iostream>
