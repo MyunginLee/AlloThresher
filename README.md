@@ -1,5 +1,5 @@
-AlloThresher: Multimodal Granular Synthesizer 
-----------------------------------------
+AlloThresher: Multimodal Granular Synthesizer
+-
 ![image](https://github.com/MyunginLee/allo_thresher/assets/31257194/31f82697-1b9f-4bb1-b893-b6755120e8c2)
 
 AlloThresher is a multimodal instrument with audiovisual granular synthesis using the gestural interface. Granular synthesis is a sound synthesis method that creates complex tones by combining and mixing the simple micro-sonic elements called grains. 
