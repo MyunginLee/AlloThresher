@@ -14,6 +14,7 @@ Paper and Performance in the ICMA's International Computer Music Conference (ICM
 Paper: https://www.researchgate.net/publication/382330556_AlloThresher_Multimodal_Granular_Synthesizer
 
 ----------------------------------------
+Installation
 
 Requirements:
 https://github.com/AlloSphere-Research-Group/allolib/blob/master/readme.md
