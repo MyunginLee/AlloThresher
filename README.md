@@ -10,7 +10,7 @@ While some modern digital media arts focus on the novelty of a specific technolo
 ​Presented in ACM SIGGRAPH SPARKS, December 2022.
 Performance in Media Arts and Technology, University of California Santa Barbara, 2023
 Paper and Performance in the ICMA's International Computer Music Conference (ICMC 2024), Seoul, 2024
-
+Paper: https://www.researchgate.net/publication/382330556_AlloThresher_Multimodal_Granular_Synthesizer
 ----------------------------------------
 
 Requirements:
